@@ -1,0 +1,8 @@
+UserName: wing.nus@gmail.com
+Password:
+UserId: 105956
+filePath: ../data/
+activeCoursePageNum: 1
+inactiveCoursePageNum: 25
+dbPath: './coursera.db'
+filePath: './data/'

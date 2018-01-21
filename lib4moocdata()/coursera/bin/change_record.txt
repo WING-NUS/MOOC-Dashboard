@@ -1,0 +1,47 @@
+    # Copyright 2014 ┬⌐ Muthu Kumar C
+    DBI connect('dbname=C:/Users/kevin/OneDrive/Documents/FYP/Muthu's api/lib4moocdata/coursera/bin/../data/coursera.db','foo',...) failed: unable to open database file at C:/Users/kevin/OneDrive/Documents/FYP/Muthu's api/lib4moocdata/coursera/bin/../lib/Model.pm line 44.
+    pl says Cannot connect:   unable to open database file
+     dsn-dbi:SQLite:dbname=C:/Users/kevin/OneDrive/Documents/FYP/Muthu's api/lib4moocdata/coursera/bin/../data/coursera.db at C:/Users/kevin/OneDrive/Documents/FYP/Muthu's api/lib4moocdata/coursera/bin/../lib/Model.pm line 44.
+
+make_noinstructor_corpus.pl: edited path for data
+make_noinstructor_corpus.pl: edited path for log
+
+    # Copyright 2014 ┬⌐ Muthu Kumar C
+
+     Using data from Errata, Lecture, Homework, Exam forumtypes
+
+fromOriginalToCanonical.py: changed id <- id to id -< forumId
+
+    # Copyright 2014 ┬⌐ Muthu Kumar C
+
+    DBD::SQLite::db prepare failed: no such column: inst_replied at C:/Users/kevin/OneDrive/Documents/FYP/Muthu's api/lib4moocdata/coursera/bin/../lib/Model.pm line 296.
+    Exception: updateInterventionDensity: can't prepare
+     select count(id) from thread where courseid = ? and forumid = ? and inst_replied = 1: No such file or directory  at C:/Users/kevin/OneDrive/Documents/FYP/Muthu's api/lib4moocdata/coursera/bin/../lib/Model.pm line 296.
+     Using data from Errata, Lecture, Homework, Exam forumtypes
+
+model.pm: change variable name 'inst_replied' to 'instReplied'
+
+    # Copyright 2014 ┬⌐ Muthu Kumar C
+
+    DBD::SQLite::db prepare failed: no such column: u.postid at make_noinstructor_corpus.pl line 154.
+    Couldn't prepare user insert statement: no such column: u.postid at make_noinstructor_corpus.pl line 154.
+     Using data from Errata, Lecture, Homework, Exam forumtypes
+
+make_noinstructor_corpus.pl: 143-166, 193-213: change from 'user' to 'user_new', from 'post' to 'post_new',
+from 'comment' to 'comment_new'
+
+    # Copyright 2014 ┬⌐ Muthu Kumar C
+
+    DBD::SQLite::db prepare failed: no such table: post2 at make_noinstructor_corpus.pl line 256.
+    Couldn't prepare statement: no such table: post2
+     Using data from Errata, Lecture, Homework, Exam forumtypes
+
+248-255: create tables 'post2', 'comment2', 'post3', 'comment3'
+
+    # Copyright 2014 ┬⌐ Muthu Kumar C
+
+    DBD::SQLite::db prepare failed: table post2 has no column named thread_id at make_noinstructor_corpus.pl line 265.
+    Couldn't prepare statement: table post2 has no column named thread_id
+     Using data from Errata, Lecture, Homework, Exam forumtypes
+
+Create tables 'post2', 'post3', 'comment2', 'comment3' in step 5 in Ann's code.
