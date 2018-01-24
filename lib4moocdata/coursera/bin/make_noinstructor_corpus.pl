@@ -171,7 +171,7 @@ if($density_calculation){
 
 my $instpostqry = "select u.postid, p.post_time from user_new u, post_new p
 					where user_title in (\"MENTOR\",\"UNIVERSITY_ADMIN\",
-										 \"Coursera Staff\", \"Community TA\",
+										 \"TEACHING_STAFF\", \"Community TA\",
 										 \"Coursera Tech Support\"
 										)
 										and u.threadid = p.thread_id and u.courseid = p.courseid
@@ -185,7 +185,7 @@ my $instpoststh = $dbh->prepare($instpostqry)
 
 my $instcmntqry = "select u.postid, p.post_time from user_new u, comment_new p
 					where user_title in (\"MENTOR\",\"UNIVERSITY_ADMIN\",
-										 \"Coursera Staff\", \"Community TA\",
+										 \"TEACHING_STAFF\", \"Community TA\",
 										 \"Coursera Tech Support\"
 										)
 										and u.threadid = p.thread_id and u.courseid = p.courseid
