@@ -194,30 +194,30 @@ my $instcmntqry = "select u.postid, p.post_time from user_new u, comment_new p
 										and u.courseid = ?
 										and u.forumid = ?";
 
-# my $instcmntsth = $dbh->prepare($instcmntqry)
-# 						or die "Couldn't prepare user insert statement: " . $DBI::errstr;
-#
-# my $postsquery = "select id, thread_id, original, post_order, url, post_text,
-# 					votes, user, post_time, forumid, courseid
-# 								  from post
-# 								  where thread_id= ?
-# 								  and courseid=? and forumid=?
-# 								  and post_time < ?
-# 								  order by post_time";
-#
-# my $poststh = $dbh->prepare($postsquery)
-# 					or die "Couldn't prepare user insert statement: " . $DBI::errstr;
-#
-# my $commentsquery = "select id, post_id, thread_id, forumid, url, comment_text,
-# 					  votes, user, post_time, user_name, courseid
-# 					 from comment
-# 					 where post_id=? and thread_id=?
-# 					 and courseid=? and forumid=?
-# 					 and post_time < ?
-# 					 order by post_time";
-
 my $instcmntsth = $dbh->prepare($instcmntqry)
 						or die "Couldn't prepare user insert statement: " . $DBI::errstr;
+
+						# my $instcmntsth = $dbh->prepare($instcmntqry)
+						# 						or die "Couldn't prepare user insert statement: " . $DBI::errstr;
+						#
+						# my $postsquery = "select id, thread_id, original, post_order, url, post_text,
+						# 					votes, user, post_time, forumid, courseid
+						# 								  from post
+						# 								  where thread_id= ?
+						# 								  and courseid=? and forumid=?
+						# 								  and post_time < ?
+						# 								  order by post_time";
+						#
+						# my $poststh = $dbh->prepare($postsquery)
+						# 					or die "Couldn't prepare user insert statement: " . $DBI::errstr;
+						#
+						# my $commentsquery = "select id, post_id, thread_id, forumid, url, comment_text,
+						# 					  votes, user, post_time, user_name, courseid
+						# 					 from comment
+						# 					 where post_id=? and thread_id=?
+						# 					 and courseid=? and forumid=?
+						# 					 and post_time < ?
+						# 					 order by post_time";
 
 my $postsquery = "select id, thread_id, original, post_order, url, post_text,
 					votes, user, post_time, forumid, courseid
