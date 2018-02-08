@@ -174,8 +174,11 @@ my $instpostqry = "select u.postid, p.post_time from user_new u, post_new p
 										 \"TEACHING_STAFF\", \"Community TA\",
 										 \"Coursera Tech Support\"
 										)
-										and u.threadid = p.thread_id and u.courseid = p.courseid
-										and u.id = p.user and u.forumid = p.forumid	and u.postid = p.id
+										and u.threadid = p.thread_id
+										and u.courseid = p.courseid
+										and u.id = p.user
+										and u.forumid = p.forumid
+										and u.postid = p.id
 										and u.threadid = ?
 										and u.courseid = ?
 										and u.forumid = ?";
@@ -188,8 +191,11 @@ my $instcmntqry = "select u.postid, p.post_time from user_new u, comment_new p
 										 \"TEACHING_STAFF\", \"Community TA\",
 										 \"Coursera Tech Support\"
 										)
-										and u.threadid = p.thread_id and u.courseid = p.courseid
-										and u.id = p.user and u.forumid = p.forumid and u.postid = p.id
+										and u.threadid = p.thread_id
+										and u.courseid = p.courseid
+										and u.id = p.user
+										and u.forumid = p.forumid
+										and u.postid = p.id
 										and u.threadid = ?
 										and u.courseid = ?
 										and u.forumid = ?";
@@ -223,7 +229,8 @@ my $postsquery = "select id, thread_id, original, post_order, url, post_text,
 					votes, user, post_time, forumid, courseid
 								  from post_new
 								  where thread_id= ?
-								  and courseid=? and forumid=?
+								  and courseid=?
+									and forumid=?
 								  and post_time < ?
 								  order by post_time";
 
@@ -233,8 +240,10 @@ my $poststh = $dbh->prepare($postsquery)
 my $commentsquery = "select id, post_id, thread_id, forumid, url, comment_text,
 					  votes, user, post_time, user_name, courseid
 					 from comment_new
-					 where post_id=? and thread_id=?
-					 and courseid=? and forumid=?
+					 where post_id=?
+					 and thread_id=?
+					 and courseid=?
+					 and forumid=?
 					 and post_time < ?
 					 order by post_time";
 
@@ -328,7 +337,7 @@ foreach my $forumrow ( @$forumrows ){
 			next;
 		}
 
-		my $firstpostTime	= 99999999999;
+		my $firstpostTime	= 9999999999999;
 		my $firstpost		= 999999999;
 		foreach my $post (keys %$instposts){
 			my $postTime 	= $instposts->{$post}->{'post_time'};
