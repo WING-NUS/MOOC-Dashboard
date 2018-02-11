@@ -31,6 +31,10 @@ c.execute('''REPLACE into user_new(id, postid, threadid, forumid, courseid)
 select user, id, thread_id, forumid, courseid
 from post_new
 ''')
+c.execute('''REPLACE into user_new(id, postid, threadid, forumid, courseid)
+select user, id, thread_id, forumid, courseid
+from comment_new
+''')
 c.execute('SELECT DISTINCT id from user_temp')
 users = c.fetchall()
 for user in users:
