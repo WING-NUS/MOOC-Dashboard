@@ -8,13 +8,14 @@ import shlex, subprocess
 debug = 1
 
 def populate_sqlite_db():
+    subprocess.run("cd WriteJsonDataToSQLite", shell=True)
     subprocess.run("python writeToSQLite.py", shell=True)
     subprocess.run("python fromOriginalToCanonical.py", shell=True)
     subprocess.run("python transferFromTables.py", shell=True)
 
-# def populate_truncated():
-#     subprocess.run("perl make_noinstructor_corpus.pl -dbname coursera -course bVgqTevEEeWvGQrWsIkLlw~DKxwULr1EeaN_w7XVB3P7A -density", shell=True)
-#
+def populate_intervened_posts():
+    subprocess.run("perl make_noinstructor_corpus.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw -density", shell=True)
+
 # def updatedocid():
 #     subprocess.run("perl updatedocid.pl -dbname coursera -course bVgqTevEEeWvGQrWsIkLlw~DKxwULr1EeaN_w7XVB3P7A", shell=True)
 #
@@ -31,7 +32,12 @@ if __name__ == '__main__':
     if debug:
         print("batch script starts running...")
         # subprocess.run("ls", shell=True)
-        populate_sqlite_db()
-        if debug:
-            print("batch script completed")
-    # main()
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(dir_path + "/WriteJsonDataToSQLite")
+    populate_sqlite_db()
+    # Copy transfered database to data file
+    # subprocess.run("mv ", shell=True)
+    os.chdir(dir_path + "/lib4moocdata/coursera/bin")
+    populate_intervened_posts()
+    if debug:
+        print("batch script completed")
