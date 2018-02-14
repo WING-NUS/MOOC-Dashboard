@@ -17,7 +17,7 @@ def populate_intervened_posts():
     subprocess.run("perl make_noinstructor_corpus.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw -density", shell=True)
 
 # def updatedocid():
-#     subprocess.run("perl updatedocid.pl -dbname coursera -course bVgqTevEEeWvGQrWsIkLlw~DKxwULr1EeaN_w7XVB3P7A", shell=True)
+#     subprocess.run("perl updatedocid.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw", shell=True)
 #
 # def generate_feature():
 #     subprocess.run("perl generatestratCVSamplesfromsingleCourses.pl -course bVgqTevEEeWvGQrWsIkLlw~DKxwULr1EeaN_w7XVB3P7A -dbname coursera -folds 5 -uni -allf", shell=True)

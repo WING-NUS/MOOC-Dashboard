@@ -7,7 +7,7 @@ use Getopt::Long;
 
 my $path;	# Path to binary directory
 BEGIN{
-	if ($FindBin::Bin =~ /(.*)/) 
+	if ($FindBin::Bin =~ /(.*)/)
 	{
 		$path  = $1;
 	}
@@ -89,19 +89,19 @@ if ( scalar @forums eq 0 ){
 	print $log "\n Exception: Failed to get data from forum table. Check db!";
 }
 
-my $threadqry	= "Select id from thread where courseid = ? and forumid = ?";
+my $threadqry	= "Select id from thread_new where courseid = ? and forumid = ?";
 my $sth			= $dbh->prepare($threadqry) or die "Prepare faield $! \n $threadqry";
 
-my $uqry	= "Update thread set docid = ?  where courseid = ? and forumid = ? and id = ?";
+my $uqry	= "Update thread_new set docid = ?  where courseid = ? and forumid = ? and id = ?";
 my $usth	= $dbh->prepare($uqry) or die "Update prepare faield $! \n $uqry";
 
-my $delqry	= "Update thread set docid = 0 where courseid = ? and forumid = ?";
+my $delqry	= "Update thread_new set docid = 0 where courseid = ? and forumid = ?";
 my $delsth	= $dbh->prepare("$delqry");
 
 my $count	= $maxid + 1;
 foreach (@forums){
 	my $courseid	= $_->[0];
-	my $forumid		= $_->[1];	
+	my $forumid		= $_->[1];
 	print $log "\n Selecting threads from course-$courseid forum-$forumid";
 	$sth->execute($courseid,$forumid);
 	if ($mode eq 'del'){
