@@ -1,0 +1,48 @@
+
+ May include non-unigram features: tftype: none idftype:none
+
+ assigning end index to 5
+ eQJvsjn9EeWJaxK5AT4frw 	 dfSoKyj3EeaZ8Apto8QB_w	3 + ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 dfSoKyj3EeaZ8Apto8QB_w	9 - ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 ddvv7Cj3Eea7jBLLHPwd0w	5 + ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 ddvv7Cj3Eea7jBLLHPwd0w	11 - ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 deun1Sj3Eea8jw6UvTi2Tw	8 + ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 deun1Sj3Eea8jw6UvTi2Tw	31 - ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 ddSdZCj3Eea8jw6UvTi2Tw	14 + ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 ddSdZCj3Eea8jw6UvTi2Tw	57 - ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 deORDij3Eea7jBLLHPwd0w	30 + ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 deORDij3Eea7jBLLHPwd0w	73 - ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 daavFyj3Eea7jBLLHPwd0w	30 + ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 daavFyj3Eea7jBLLHPwd0w	81 - ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 da_-BSj3EeaZ8Apto8QB_w	37 + ve threads
+ eQJvsjn9EeWJaxK5AT4frw 	 da_-BSj3EeaZ8Apto8QB_w	92 - ve threads
++ve threads: 37 	 Num folds: 5 	 Fold size: 7 	 
+-ve threads: 92 	 Num folds: 5 	 Fold size: 18 	 
+ TRAINING SET INDICES: 7 	 36 
+ TESTING SET INDICES: 0 	 6
+ TRAINING SET INDICES: 18 	 91 
+ TESTING SET INDICES: 0 	 17
++ve threads: 37 	 Num folds: 5 	 Fold size: 7 	 
+-ve threads: 92 	 Num folds: 5 	 Fold size: 18 	 
+ TRAINING SET INDICES: 14 	 6 
+ TESTING SET INDICES: 7 	 13
+ TRAINING SET INDICES: 36 	 17 
+ TESTING SET INDICES: 18 	 35
++ve threads: 37 	 Num folds: 5 	 Fold size: 7 	 
+-ve threads: 92 	 Num folds: 5 	 Fold size: 18 	 
+ TRAINING SET INDICES: 21 	 13 
+ TESTING SET INDICES: 14 	 20
+ TRAINING SET INDICES: 54 	 35 
+ TESTING SET INDICES: 36 	 53
++ve threads: 37 	 Num folds: 5 	 Fold size: 7 	 
+-ve threads: 92 	 Num folds: 5 	 Fold size: 18 	 
+ TRAINING SET INDICES: 28 	 20 
+ TESTING SET INDICES: 21 	 27
+ TRAINING SET INDICES: 72 	 53 
+ TESTING SET INDICES: 54 	 71
++ve threads: 37 	 Num folds: 5 	 Fold size: 7 	 
+-ve threads: 92 	 Num folds: 5 	 Fold size: 18 	 
+ TRAINING SET INDICES: 35 	 27 
+ TESTING SET INDICES: 28 	 34
+ TRAINING SET INDICES: 90 	 71 
+ TESTING SET INDICES: 72 	 89

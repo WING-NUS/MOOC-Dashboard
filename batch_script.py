@@ -8,20 +8,34 @@ import shlex, subprocess
 debug = 1
 
 def populate_sqlite_db():
+    """Transfer json files into sqlite database.
+    And add new tables(forum, post2, post3, comment2, comment3).
+    Modify the database into canonical format.
+    """
+
     subprocess.run("cd WriteJsonDataToSQLite", shell=True)
     subprocess.run("python writeToSQLite.py", shell=True)
     subprocess.run("python fromOriginalToCanonical.py", shell=True)
     subprocess.run("python transferFromTables.py", shell=True)
 
 def populate_intervened_posts():
+    """Extract the posts and comments that have been intervened by the instructor for at least once.
+    This should populate records in tables post2 and comment2 with posts from threads intervened at least once by an instructor or TA.
+    """
+
     subprocess.run("perl make_noinstructor_corpus.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw -density", shell=True)
 
-# def updatedocid():
-#     subprocess.run("perl updatedocid.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw", shell=True)
+def update_docid():
+    """creates document ids, one per each thread.
+    This is useful when threads from all the courses are in the same database.
+    This is a required field for feature extraction.
+    """
+
+    subprocess.run("perl updatedocid.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw", shell=True)
 #
 # def generate_feature():
-#     subprocess.run("perl generatestratCVSamplesfromsingleCourses.pl -course bVgqTevEEeWvGQrWsIkLlw~DKxwULr1EeaN_w7XVB3P7A -dbname coursera -folds 5 -uni -allf", shell=True)
-#     subprocess.run("perl generatestratCVSamplesfromsingleCourses.pl -course bVgqTevEEeWvGQrWsIkLlw~DKxwULr1EeaN_w7XVB3P7A -dbname coursera -folds 5 -allf", shell=True)
+#     subprocess.run("perl generatestratCVSamplesfromsingleCourses.pl -course eQJvsjn9EeWJaxK5AT4frw -dbname coursera -folds 5 -uni -allf", shell=True)
+#     subprocess.run("perl generatestratCVSamplesfromsingleCourses.pl -course eQJvsjn9EeWJaxK5AT4frw -dbname coursera -folds 5 -allf", shell=True)
 #
 # def classifier_model():
 #     subprocess.run("perl 	classify_thread.pl -course bVgqTevEEeWvGQrWsIkLlw~DKxwULr1EeaN_w7XVB3P7A \

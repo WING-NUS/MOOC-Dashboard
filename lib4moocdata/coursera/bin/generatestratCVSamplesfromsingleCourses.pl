@@ -20,7 +20,7 @@ use String::Util qw(trim);
 my $path;	# Path to binary directory
 
 BEGIN{
-	if ($FindBin::Bin =~ /(.*)/) 
+	if ($FindBin::Bin =~ /(.*)/)
 	{
 		$path  = $1;
 	}
@@ -43,8 +43,8 @@ sub License{
 sub Help{
 	print STDERR "Usage: $progname -h\t[invokes help]\n";
   	print STDERR "       $progname -n -dbname -course [-allf -uni -cutoff -stem
-										-tftype	-tprop -forumtype		
-										-courseref	-affir		
+										-tftype	-tprop -forumtype
+										-courseref	-affir
 										-nums -pdtb -pdtbexp -pdtbimp -agree  -q	]\n";
 	print STDERR "Options:\n";
 	print STDERR "\t-folds number of cross-validation folds \n";
@@ -116,7 +116,7 @@ $help = 1 unless GetOptions(
 				#NON-UNIGRAM FEATURES
 				'forumtype'		=> 	\$forumtype,
 				'affir'			=>	\$affirmations,
-				'courseref'		=>	\$courseref,	
+				'courseref'		=>	\$courseref,
 				'nont_course'	=>	\$nonterm_courseref,
 				'tprop'			=>	\$tprop,
 				'nums'			=>	\$numsentences,
@@ -131,18 +131,18 @@ $help = 1 unless GetOptions(
 				'h' 			=>	\$help,
 				'q' 			=>	\$quite
 			);
-		
+
 if ( $help ){
-	Help();	
+	Help();
 	exit(0);
 }
 
 if ( !defined $num_folds){
 	print "\n number of folds is undefined";
-	Help();	
+	Help();
 	exit(0);
 }
-	
+
 if (!$quite){
 	License();
 }
@@ -184,7 +184,7 @@ my %serialid_to_docid		= ();
 my %instreplied				= ();
 my $serial_id				= 0;
 my $corpus_type				= undef;
-		
+
 my @additive_sequence		= (0,1,3,7,15,31,63,127);
 my @ablation_sequence		= (-31,47,55,59,61);
 my @individual_features 	= (2,4,8,16,32);
@@ -223,9 +223,9 @@ my $tmp_file 		= "$path/../tmp_file/tmp_samples_$courseid";
 
 my $num_courses 			= 1;
 
-my $threadsquery = 	"select docid, courseid, id, 
-						inst_replied from thread 
-						where courseid = ? 
+my $threadsquery = 	"select docid, courseid, id,
+						inst_replied from thread_new 
+						where courseid = ?
 							and forumid = ?";
 
 my $threadssth = $dbh->prepare($threadsquery) or die "prepare $threadsquery failed \n $DBI::errstr!\n";
@@ -236,7 +236,7 @@ if(!defined $end_index){
 	print $log "\n assigning end index to $num_folds";
 }
 
-my $corpus;	
+my $corpus;
 
 foreach my $course (@$courses){
 	push (@$corpus, $course);
@@ -255,10 +255,10 @@ my %posthreads 				= ();
 my %negthreads 				= ();
 my %held_out_data_keys		= ();
 
-#add all threads in the corpus 
+#add all threads in the corpus
 foreach my $courseid (@$corpus){
 	my $forums = $dbh->selectall_arrayref("select id, forumname from forum
-											where courseid =\'$courseid\' 
+											where courseid =\'$courseid\'
 											and forumname in
 											('Homework','Lecture','Exam','Errata')"
 										  )
@@ -296,7 +296,7 @@ if (keys %course_samples != scalar @$corpus ){
 #add the threads
 foreach my $courseid (@$courses){
 	my $forums = $dbh->selectall_arrayref("select id, forumname from forum
-											where courseid =\'$courseid\' 
+											where courseid =\'$courseid\'
 											and forumname in
 											('Homework','Lecture','Exam','Errata')"
 										  )
@@ -310,10 +310,10 @@ foreach my $courseid (@$courses){
 		foreach my $row ( @$threads ){
 			my $courseid = $row->[1];
 			my $threadid = $row->[2];
-			
+
 			my $inst_replied	= $row->[3];
 			my $docid 			= $row->[0];
-			
+
 			#Sanity checks
 			if (!defined $docid ){
 				print $log "DOCID is null for $courseid \t $threadid \t $forumidnumber \t $inst_replied \n";
@@ -321,14 +321,14 @@ foreach my $courseid (@$courses){
 			}
 			if (!defined $courseid ){
 				die "courseid is null for $docid  \n";
-			}					
+			}
 			if (!defined $threadid ){
 				die "threadid is null for $docid \n";
 			}
 			if (!defined $forumname ){
 				die "forumaname is null for $docid \n";
 			}
-			
+
 			if ($inst_replied) {
 				$posthreads{$serial_id} = [$courseid,$threadid,$forumname,$forumidnumber,$serial_id];
 				$instreplied{$serial_id} = 1;
@@ -336,7 +336,7 @@ foreach my $courseid (@$courses){
 			else{
 				$negthreads{$serial_id} = [$courseid,$threadid,$forumname,$forumidnumber,$serial_id];
 			}
-			
+
 			$docid_to_serialid{$serial_id}	= $docid;
 			$serialid_to_docid{$docid} 		= $serial_id;
 			$serial_id ++;
@@ -376,7 +376,7 @@ if(defined $cvfoldfile){
 		my @serialids;
 		foreach my $id (@docids){
 			push (@serialids, $serialid_to_docid{$id});
-		}	
+		}
 		$docids_perfold{trim($fields[0])}{$fields[1]} = \@serialids;
 	}
 }
@@ -385,25 +385,25 @@ if(defined $cvfoldfile){
 for(my $index = $start_index; $index < $end_index; $index ++){
 	my $max_posthread_sample_id = keys %posthreads;
 	my $max_negthread_sample_id = keys %negthreads;
-	
+
 	my $posfold_size = int($max_posthread_sample_id / $num_folds);
 	my $negfold_size = int($max_negthread_sample_id / $num_folds);
 	print $log "\n+ve threads: $max_posthread_sample_id \t Num folds: $num_folds \t Fold size: $posfold_size \t ";
 	print $log "\n-ve threads: $max_negthread_sample_id \t Num folds: $num_folds \t Fold size: $negfold_size \t ";
-	
+
 	my $training_set;
 	my $test_set;
-	
+
 	if(defined $cvfoldfile){
 		$training_set	= $docids_perfold{'training'}{$index};
 		$test_set		= $docids_perfold{'test'}{$index};
 	}
 	else{
 		my $postraining_set;
-		my $postest_set;	
+		my $postest_set;
 		my $negtraining_set;
-		my $negtest_set;	
-		
+		my $negtest_set;
+
 		($postraining_set, $postest_set) = getTrainTestCourseSetsCV($index, $posfold_size, \%posthreads);
 		($negtraining_set, $negtest_set) = getTrainTestCourseSetsCV($index, $negfold_size, \%negthreads);
 		print "\n generatestratCVSamplesfromsingleCourses: test and training for fold $index done";
@@ -431,7 +431,7 @@ foreach my $type ("test","training"){
 		foreach my $iter (@iterations){
 			my($d0,$d1,$d2,$d3,$d4,$d5,$d6,$d7,$d8,$d9,$d10) = getBin($iter);
 			print "\n Iteration $iter begins. Set $d0-$d1-$d2-$d3-$d4-$d5-$d6-$d7-$d8-$d9-$d10";
-			
+
 			if($allfeatures){
 				$forumtype 			= $d0;
 				$affirmations 		= $d1;
@@ -453,7 +453,7 @@ foreach my $type ("test","training"){
 					# print "\n Error: no removed files found";
 					# exit(0);
 				# }
-				
+
 				# foreach my $file (keys %{$removed_files}){
 					# print "\n $file \t $removed_files->{$file}";
 				# }
@@ -464,10 +464,10 @@ foreach my $type ("test","training"){
 			if($unigrams){
 				$outfile .= "uni+";
 			}
-			
-			# output file			
+
+			# output file
 			$outfile  .=  $d0 	? "forum+"			: "";
-			$outfile  .=  $d1 	? "affir+"  		: "";	
+			$outfile  .=  $d1 	? "affir+"  		: "";
 			$outfile  .=  $d2 	? "tprop+"			: "";
 			$outfile  .=  $d3 	? "nums+"			: "";
 			$outfile  .=  $d4 	? "nont_course+"  	: "";
@@ -476,13 +476,13 @@ foreach my $type ("test","training"){
 			$outfile  .=  $d7 	? "imppdtb+" 		: "";
 			$outfile  .=  $d8 	? "viewedins+" 		: "";
 			$outfile  .=  $d9	? "course+" 		: "";
-			
+
 			print "\n Features switched on for this iteration $iter: $outfile";
 			print $log "\n Features switched on for this iteration $iter: $outfile";
-			
+
 			$outfile	.=  "_".$type."_".$fold;
 			$outfile 	.= "_". $courses->[0] . ".txt";
-			
+
 			#feature name file
 			my $feature_file = "features";
 
@@ -496,22 +496,22 @@ foreach my $type ("test","training"){
 			$feature_file .= $d7 	? "+imppdtb" 	: "";
 			$feature_file .= $d8 	? "+viewedins" 	: "";
 			$feature_file .= $d9	? "+course" 	: "";
-						
+
 			$feature_file .= "_". $courses->[0] . ".txt";
-			
+
 			my %samples = ();
 			my @positivethreads;
 			my @negativethreads;
 			my %samplecount = ('+1' => 0,
 							   '-1' => 0
 							  );
-	
+
 			my $dataset = $datasets{"$type$fold"};
-			
-			
+
+
 			foreach my $serial_id (@$dataset){
 				# print "adding $serial_id \n ";
-				
+
 				if ( !exists $samples{$serial_id} ) {
 						if (!exists $instreplied{$serial_id} ){
 							addtosample(\%negthreads, $serial_id, '-1', \@negativethreads, \%samples);
@@ -566,23 +566,23 @@ foreach my $type ("test","training"){
 									 };
 					print "\n No -ve instances sampled";
 			}
-			
+
 			print "\n +ve samples:  $samplecount{'+1'} ";
 			print "\n -ve samples:  $samplecount{'-1'} ";
-			
-			
+
+
 			open (my $FH1, ">$tmp_file") or die "cannot open $tmp_file for writing \n $!";
 			open (my $FEXTRACT, ">$error_log_file") or die "cannot open features file$!";
-			
 
-			FeatureExtraction::generateTrainingFile(	$FH1, $dbh, $mysqldbname, \%threadcats, 
+
+			FeatureExtraction::generateTrainingFile(	$FH1, $dbh, $mysqldbname, \%threadcats,
 														$unigrams, $freqcutoff, $stem, $term_length_cutoff, $tftype, $idftype,
-														$tprop, $numw, $numsentences, 
+														$tprop, $numw, $numsentences,
 														$courseref, $nonterm_courseref, $affirmations, $agree,
-														$numposts, $forumtype, 
+														$numposts, $forumtype,
 														$exp_path, $feature_file,
 														\%course_samples, $corpus, $corpus_type, $FEXTRACT, $log,
-														$debug, $pdtb_exp, $pdtb_imp, $viewed, 
+														$debug, $pdtb_exp, $pdtb_imp, $viewed,
 														$pdtbfilepath, $removed_files, $print_format
 													);
 			close $FH1;
@@ -597,7 +597,7 @@ foreach my $type ("test","training"){
 			print $log "\n +ve samples:  $samplecount{'+1'} ";
 			print $log "\n -ve samples:  $samplecount{'-1'} ";
 			print $log "\n ##Done $iter";
-			
+
 			print "\n +ve samples:  $samplecount{'+1'} ";
 			print "\n -ve samples:  $samplecount{'-1'} ";
 			print "\n ##Done  $iter";
@@ -617,7 +617,7 @@ sub mergePositivenNegativeSets{
 	my @dataset;
 	push (@dataset, @$pos_set);
 	# my $max_pos_id  = (scalar @$pos_set) - 1;
-	
+
 	# foreach $seriad_id (@$neg_set){
 		# $max_pos_id + $seriad_id;
 	# }
@@ -627,24 +627,24 @@ sub mergePositivenNegativeSets{
 
 sub getTrainTestCourseSetsCV{
 		my($fold, $fold_size, $data) = @_;
-		
+
 		my $num_data_points = keys %$data;
 		my @data_points		= keys %$data;
-		
+
 		my $testset_start	= $fold * $fold_size;
 		my $testset_end		= $testset_start + $fold_size-1;
 		$testset_end		= ($testset_end > ($num_data_points) )? ($testset_end% ($num_data_points) ) : $testset_end;
-		
+
 		my $trainingset_start	= $testset_end+1;
 		$trainingset_start		= ($trainingset_start > ($num_data_points-1) )? ($trainingset_start %($num_data_points)) : $trainingset_start;
 		my $trainingset_end		= $testset_start-1;
 		$trainingset_end		= ($trainingset_end < 0)? ($num_data_points-1) : $trainingset_end;
-		
+
 		print $log  "\n TRAINING SET INDICES: $trainingset_start \t $trainingset_end ";
 		print $log  "\n TESTING SET INDICES: $testset_start \t $testset_end";
-		
+
 		# print $log "\nTRAINING COURSES: ";
-		my @trainingset; 
+		my @trainingset;
 		my @testset;
 		if($trainingset_start > $trainingset_end){
 			foreach my $j ($trainingset_start..($num_data_points-1),0..$trainingset_end){
@@ -656,9 +656,9 @@ sub getTrainTestCourseSetsCV{
 			foreach my $j ($trainingset_start..$trainingset_end){
 				push (@trainingset, $data_points[$j]);
 				# print $log "$j: $courses->{$j} \t";
-			}	
+			}
 		}
-		
+
 		# print $log "\nTESTING COURSES: ";
 		if($testset_start > $testset_end){
 			foreach my $j ($testset_start..($num_courses-1),0..$testset_end){
@@ -672,7 +672,7 @@ sub getTrainTestCourseSetsCV{
 				# print $log "$j: $courses->{$j} \t";
 			}
 		}
-		
+
 	return(\@trainingset,\@testset);
 }
 
@@ -681,17 +681,17 @@ sub addtosample{
 	if (!defined $allthreads || !defined $serial_id || !defined $label || !defined $threads || !defined $samples ){
 		die "Exception: addtosample: docid or label or thread collection not defined.";
 	}
-	
+
 	my $docid			= $docid_to_serialid{$serial_id};
 	my $courseid		= $allthreads->{$serial_id}->[0];
 	my $threadid		= $allthreads->{$serial_id}->[1];
 	my $forumname		= $allthreads->{$serial_id}->[2];
 	my $forumidnumber	= $allthreads->{$serial_id}->[3];
-	
+
 	if (!defined $threadid || !defined $courseid || !defined $docid || !defined $forumname){
 		die "Exception: addtosample undef ser-$serial_id \t course-$courseid \t thread-$threadid \t doc-$docid \t forum-$forumname\n";
 	}
-	
+
 	push (@$threads, [$threadid,$docid,$courseid,$label,$forumname,$forumidnumber,$serial_id]);
 	$samples->{$serial_id} = 1;
 }
@@ -701,42 +701,42 @@ sub getBin{
 	if(!defined $given_number){
 		die "Exception: getBin Arg decimal_number not defined\n";
 	}
-	
+
 	my $decimal_number = abs($given_number);
-	
+
 	my $d0 = $decimal_number%2;
 	$decimal_number = $decimal_number/2;
-	
+
 	my $d1 = $decimal_number%2;
 	$decimal_number = $decimal_number/2;
-	
+
 	my $d2 = $decimal_number%2;
 	$decimal_number = $decimal_number/2;
-	
+
 	my $d3 = $decimal_number%2;
 	$decimal_number = $decimal_number/2;
-	
+
 	my $d4 = $decimal_number%2;
 	$decimal_number = $decimal_number/2;
-	
+
 	my $d5 = $decimal_number%2;
 	$decimal_number = $decimal_number/2;
-	
+
 	my $d6 = $decimal_number%2;
 	$decimal_number = $decimal_number/2;
-	
+
 	my $d7 = $decimal_number%2;
 	$decimal_number = $decimal_number/2;
-	
+
 	my $d8 = $decimal_number%2;
 	$decimal_number = $decimal_number/2;
-	
+
 	my $d9 = $decimal_number%2;
 	$decimal_number = $decimal_number/2;
-	
+
 	my $d10 = $decimal_number%2;
 	$decimal_number = $decimal_number/2;
-	
+
 	if ($given_number < 0 ){
 		return (0, $d0,$d1,$d2,$d3,$d4,$d5,$d6,$d7,$d8,$d9);
 	}
@@ -747,7 +747,7 @@ sub getBin{
 
 sub readRemovedFiles{
 	my %removed_files = ();
-	open( my $rem_fh, "<$path/../data/Removed_files_$courseid".".txt") 
+	open( my $rem_fh, "<$path/../data/Removed_files_$courseid".".txt")
 			or die "\n Cannot open $path/../data/Removed_files_$courseid.txt";
 	while (my $line = <$rem_fh>){
 		chomp $line;

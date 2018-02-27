@@ -74,12 +74,12 @@ c.execute('''REPLACE into post_new \
 (id,thread_id,original,post_order, post_text,votes,user,post_time,courseid) \
 select id, forumQuestionId, 0,`order`, content,upvoteCount, creatorId,createdAt,courseId
 from post where parentForumAnswerId == ''
-''')
+''')  # Select useful columes from post table into a new table. The new post table will be used by Muthu's APIs.
 c.execute('''REPLACE into post_new \
 (id,thread_id,original, post_text,votes,user,post_time,forumid,courseid) \
 select id, id, 1, content,upvoteCount, creatorId,createdAt,forumId,courseId
 from thread
-''')
+''')  # Select useful columes from thread table into a new table. The new post table will be used by Muthu's APIs.
 
 c.execute('''CREATE TABLE comment_new(
 id text, \

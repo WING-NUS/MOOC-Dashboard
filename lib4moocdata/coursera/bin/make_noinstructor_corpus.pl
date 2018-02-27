@@ -169,6 +169,7 @@ if($density_calculation){
 # 										and u.courseid = ?
 # 										and u.forumid = ?";
 
+## Query to get the posts that intervened by instructor for at least once
 my $instpostqry = "select u.postid, p.post_time from user_new u, post_new p
 					where user_title in (\"MENTOR\",\"UNIVERSITY_ADMIN\",
 										 \"TEACHING_STAFF\", \"Community TA\",
@@ -186,6 +187,7 @@ my $instpostqry = "select u.postid, p.post_time from user_new u, post_new p
 my $instpoststh = $dbh->prepare($instpostqry)
 						or die "Couldn't prepare user insert statement: " . $DBI::errstr;
 
+## Query to get the comments that intervened by instructor for at least once
 my $instcmntqry = "select u.postid, p.post_time from user_new u, comment_new p
 					where user_title in (\"MENTOR\",\"UNIVERSITY_ADMIN\",
 										 \"TEACHING_STAFF\", \"Community TA\",
@@ -337,12 +339,12 @@ foreach my $forumrow ( @$forumrows ){
 			next;
 		}
 
-		my $firstpostTime	= 9999999999999;
-		my $firstpost		= 999999999;
+		my $firstpostTime	= 9999999999999;  # Set a constrain on stimestamp. It is accurate into milliseconds
+		my $firstpost		= 999999999; 
 		foreach my $post (keys %$instposts){
 			my $postTime 	= $instposts->{$post}->{'post_time'};
 			($firstpostTime,$firstpost) = ($postTime < $firstpostTime) ? ($postTime,$post): ($firstpostTime,$firstpost)
-		}
+		}  # Add constrain to
 		print $log "\n $coursecode \t $threadid \t $firstpostTime \t $firstpost";
 
 		foreach my $post (keys %$instcmnts){
