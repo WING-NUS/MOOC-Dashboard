@@ -48,10 +48,26 @@ if __name__ == '__main__':
         # subprocess.run("ls", shell=True)
     dir_path = os.path.dirname(os.path.realpath(__file__))
     os.chdir(dir_path + "/WriteJsonDataToSQLite")
-    populate_sqlite_db()
+    # populate_sqlite_db()
+    # var = dir_path + "\\lib4moocdata\\coursera\\bin\\"
+
+    # Alternate method to run perl file
+    # var = "C:\\Users\\kevin\\OneDrive\\Documents\\FYP\\Muthu's api\\lib4moocdata\\coursera\\bin"
+    # print(var)
+    # pipe = subprocess.Popen(["perl", "make_noinstructor_corpus.pl", var], stdin=subprocess.PIPE)
+    # # pipe.stdin.write(var)
+    # pipe.stdin.close()
+
+    # Another method to run perl file
+    output = subprocess.check_output(
+        ['perl.exe', 'make_noinstructor_corpus.pl', '-dbname coursera', '-course eQJvsjn9EeWJaxK5AT4frw'],
+        universal_newlines=True,
+        cwd="C:\\Users\\kevin\\OneDrive\\Documents\\FYP\\Muthu's api\\lib4moocdata\\coursera\\bin",
+    )
+
     # Copy transfered database to data file
     # subprocess.run("mv ", shell=True)
     os.chdir(dir_path + "/lib4moocdata/coursera/bin")
-    populate_intervened_posts()
+    # populate_intervened_posts()
     if debug:
         print("batch script completed")

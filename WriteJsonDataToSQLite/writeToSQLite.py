@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 11/8/2016 8:12 PM
 # @Author  : Ann
-# @Site    : 
+# @Site    :
 # @File    : writeToSQLite.py
 # @Software: PyCharm
 
@@ -117,6 +117,13 @@ def createTables(conn, c):
 
 #***********************************for users******************************#
 def getUsers(userFileName, conn, c):
+    """
+    Import json data into sqlite users table.
+    :param userFileName: json file which contains users data
+    :param conn: connection to target database
+    :param c: cursor of the connection
+    :return:
+    """
     filedata = open(userFileName,'r')
     count = 0
     cols_in_database = ['photoUrl','courseId','userId','id','learnerId','courseRole','fullName','externalUserId']
@@ -145,6 +152,13 @@ def getUsers(userFileName, conn, c):
 
 #***********************************for threads******************************#
 def getThread(threadFileName, conn,c ):
+    """
+    Import json data into sqlite threads table.
+    :param threadFileName: json file which contains threads data
+    :param conn: connection to target database
+    :param c: cursor of the connection
+    :return:
+    """
     filedata = open(threadFileName,'r')
     count = 0
     cols_in_database = ['answerBadge','hasResolved','instReplied','totalAnswerCount','isFollowing', 'forumId' ,'lastAnsweredAt', 'topLevelAnswerCount', \
@@ -232,6 +246,13 @@ def getThread(threadFileName, conn,c ):
 
 #***********************************for posts******************************#
 def getPost(postFileName, conn, c):
+    """
+    Import json data into sqlite posts table.
+    :param postFileName: json file which contains posts data
+    :param conn: connection to target database
+    :param c: cursor of the connection
+    :return:
+    """
     filedata = open(postFileName,'r')
     count = 0
 
@@ -330,4 +351,3 @@ if __name__ == "__main__":
         getPost(postFileName, conn, c)
         print "Writing posts OK!"
     conn.close()
-

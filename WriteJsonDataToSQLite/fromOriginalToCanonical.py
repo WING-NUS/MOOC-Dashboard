@@ -25,6 +25,7 @@ c.execute('drop table if exists user_new')
 c.execute('drop table if exists user_temp')
 c.execute('drop table if exists forum')
 
+# Transfer and reorganize the threads data into canonical schema which would be used in classifier api
 c.execute('''CREATE TABLE thread_new ( \
 id text, \
 title text, \
@@ -55,7 +56,7 @@ select id,title,id,viewCount,totalAnswerCount,creatorId,lastAnsweredBy,upvoteCou
 from thread''')
 
 
-
+# Transfer and reorganize the posts data into canonical schema which would be used in classifier api
 c.execute('''CREATE TABLE post_new(
 id text, \
 thread_id text, \
@@ -81,6 +82,7 @@ select id, id, 1, content,upvoteCount, creatorId,createdAt,forumId,courseId
 from thread
 ''')  # Select useful columes from thread table into a new table. The new post table will be used by Muthu's APIs.
 
+# Transfer and reorganize the comments data into canonical schema which would be used in classifier api
 c.execute('''CREATE TABLE comment_new(
 id text, \
 post_id text, \
