@@ -9,7 +9,7 @@ require 5.0;
 # Created in Mar, 2014
 #
 ##
-## Example Run: 
+## Example Run:
 ##	perl compute_term_weights.pl -dbname <database_name> -uni -mode none -idf -thread inst
 ##
 
@@ -24,7 +24,7 @@ use utf8::all;
 my $path;	# Path to binary directory
 
 BEGIN{
-	if ($FindBin::Bin =~ /(.*)/) 
+	if ($FindBin::Bin =~ /(.*)/)
 	{
 		$path  = $1;
 	}
@@ -77,8 +77,8 @@ my $course			= undef;
 #database table names with defaults
 my $tftab			= 'termFreqC14inst';
 my $idftable		= 'termDF';
-my $posttable		= 'post';
-my $commenttable	= 'comment';
+my $posttable		= 'post_new';
+my $commenttable	= 'comment_new';
 my $project 		= 'intervention';
 
 $help = 1 unless GetOptions(
@@ -101,7 +101,7 @@ $help = 1 unless GetOptions(
 				'h' 		=> \$help,
 				'q' 		=> \$quite
 			);
-			
+
 if ( $help || (!$countUnigrams && !$countBigrams && !$threadcount) ){
 	Help();
 	exit(0);
@@ -109,7 +109,7 @@ if ( $help || (!$countUnigrams && !$countBigrams && !$threadcount) ){
 
 if( (!$threadcount && !defined $mode) || (!$threadcount && !$tf && !$idf) ){
 	Help();
-	exit(0);	
+	exit(0);
 }
 
 if (!$quite){
@@ -128,8 +128,8 @@ if ($threadtype eq 'inst'){
 	$tftab			= 'termFreqC14inst';
 }
 if ($threadtype eq 'noinst'){
-	$posttable		= 'post';
-	$commenttable	= 'comment';
+	$posttable		= 'post_new';
+	$commenttable	= 'comment_new';
 	$tftab			= 'termFreqC14noinst';
 }
 
@@ -143,7 +143,7 @@ my $dbh = Model::getDBHandle($datahome,undef,undef,$dbname);
 open (my $log ,">$path/../logs/$progname"."_$dbname.log")
 			or die "cannot open file $path/../logs/$progname"."_$dbname.log for writing";
 if(!defined $dbh){
-	print $log "\n Exception dbhandle not defined"; 
+	print $log "\n Exception dbhandle not defined";
 	print "\n Exception dbhandle not defined"; exit(0);
 }
 
@@ -154,24 +154,24 @@ print  $log "\t tftab: $tftab \t posttab: $posttable \t commenttab: $commenttabl
 
 my $postsquery = "select id, post_text
 				  from $posttable
-				  where thread_id= ? 
+				  where thread_id= ?
 				  and courseid=? and forumid=?";
-				  
+
 my $poststh = $dbh->prepare($postsquery)
 						or die "Couldn't prepare user insert statement: " . $DBI::errstr;
-				
-my $commentsquery = "select id, comment_text 
+
+my $commentsquery = "select id, comment_text
 					 from $commenttable
-					 where post_id=? and thread_id=? 
+					 where post_id=? and thread_id=?
 					 and courseid=? and forumid=?";
-					 
-my $commentssth = $dbh->prepare($commentsquery) 
+
+my $commentssth = $dbh->prepare($commentsquery)
 						or die "Couldn't prepare user insert statement: " . $DBI::errstr;
-	
+
 my $nonstem_df	= ();
 my $termcounter = 0;
 my %allterms	= ();
-# collects doc (thread) frequencies 
+# collects doc (thread) frequencies
 my $alldf;
 my $df;
 my @courses;
@@ -192,7 +192,7 @@ if(defined $mode){
 		print $log "\n Current term counter $termcounter";
 	}
 }
-								
+
 my $forumidsquery = "select id,courseid,forumname from forum ";
 
 #forumtypes
@@ -212,19 +212,19 @@ if(defined $course){
 	$forumidsquery = Model::appendListtoQuery($forumidsquery,\@courses,' courseid ',' and ');
 }
 
-my $forumrows		= $dbh->selectall_arrayref($forumidsquery) 
+my $forumrows		= $dbh->selectall_arrayref($forumidsquery)
 								or die "Courses query failed! $DBI::errstr \n $forumidsquery";
 
 if(@$forumrows eq 0){
 	print "\n No courses selected. Exiting...";
 	print $log "\n No courses selected. Exiting..."; exit(0);
 }
-my $countofthreads	= "select count(1) from thread 
-						where forumid=? and courseid=? 
+my $countofthreads	= "select count(1) from thread_new
+						where forumid=? and courseid=?
 						and inst_replied = ?";
 my $countofthreadsth = $dbh->prepare($countofthreads)
 								or die "prepare failed. $DBI::errstr \n $countofthreads";
-							
+
 my $numpostsquery 	= "select count(id) from $posttable where courseid = ? and forumid = ?";
 my $numcmntsquery 	= "select count(id) from $commenttable where courseid = ? and forumid = ?";
 my $numpoststh		= $dbh->prepare($numpostsquery) or die "prepare failed";
@@ -246,19 +246,19 @@ if( $threadcount ){
 		my $forumid 	= @$forumrow[0];
 		my $coursecode	= @$forumrow[1];
 		$forumtype		= @$forumrow[2];
-		$countofthreadsth->execute($forumid,$coursecode,$inst_replied) 
+		$countofthreadsth->execute($forumid,$coursecode,$inst_replied)
 											or die "Execute failed \n $!";
 		my $num_threads = @{$countofthreadsth->fetchrow_arrayref()}[0];
-		
+
 		$total_number_of_threads += $num_threads;
 		$count_by_forumtype{$forumtype}{'threads'} += $num_threads;
-		
+
 		my $numposts += @{$dbh->selectcol_arrayref($numpoststh,undef,$coursecode,$forumid)}[0];
 		$numposts += @{$dbh->selectcol_arrayref($numcmntssth,undef,$coursecode,$forumid)}[0];
 		$total_numposts += $numposts;
 		$count_by_forumtype{$forumtype}{'posts'} += $numposts;
 	}
-	
+
 	foreach my $forumtype (keys %count_by_forumtype){
 		print $log "\n$forumtype \t #threads \t $count_by_forumtype{$forumtype}{'threads'}";
 		print $log "\t #posts \t$count_by_forumtype{$forumtype}{'posts'}";
@@ -268,44 +268,44 @@ if( $threadcount ){
 	exit(0);
 }
 
-my $insertunigramsidfqry = "insert into $idftable (termid,term,df,idf,stem,courseid,forumid) 
+my $insertunigramsidfqry = "insert into $idftable (termid,term,df,idf,stem,courseid,forumid)
 																		values(?,?,?,?,?,?,?)";
 my $insertunigramsidfsth = $dbh->prepare($insertunigramsidfqry)
 						or die("prepare insertunigramsidfqry failed");
 
-my $updateunigramsidfqry = "Update $idftable set df= ? 
+my $updateunigramsidfqry = "Update $idftable set df= ?
 								where termid =? and	term =?
 								and courseid =? and forumid =?";
 
 my $updateunigramsidfsth = $dbh->prepare($updateunigramsidfqry)
 						or die("prepare updateunigramsidfqry failed");
-						
+
 my $insertunigramsqry = "insert into $tftab (termid,threadid,courseid,term,tf,type,stem,
-																		stopword,commentid,postid,ispost) 
+																		stopword,commentid,postid,ispost)
 																	values(?,?,?,?,?,?,?,?,?,?,?)";
 my $insertunigramssth	= $dbh->prepare($insertunigramsqry)
 						or die("prepare insertunigramsqry failed");
 my $insertbigramsqry = "insert into $tftab (termid,threadid,courseid,term,tf,type,stem,
-																		stopword,commentid, postid,ispost) 
+																		stopword,commentid, postid,ispost)
 																	values(?,?,?,?,?,?,?,?,?,?,?)";
 my $insertbigramssth	= $dbh->prepare($insertbigramsqry)
 						or die("prepare insertbigramsqry failed");
-						
+
 if($idf && $mode eq 'inc'){
 	print $log "\n Making a copy of initialised df hash..";
-	
+
 	# creating a copy
 	foreach my $courseid ( keys %$alldf ){
-		foreach my $forumid ( keys %{$alldf->{$courseid}} ){	
-			foreach my $term ( keys %{$alldf->{$courseid}{$forumid}} ){	
+		foreach my $forumid ( keys %{$alldf->{$courseid}} ){
+			foreach my $term ( keys %{$alldf->{$courseid}{$forumid}} ){
 				$df->{$courseid}{$forumid}{$term} = $alldf->{$courseid}{$forumid}{$term};
 			}
 		}
-	}	
-	
+	}
+
 	#sanity check
 	# foreach my $courseid ( keys %$df ){
-		# foreach my $forumid ( keys %{$df->{$courseid}} ){	
+		# foreach my $forumid ( keys %{$df->{$courseid}} ){
 			# print $log "\n #terms in the copy: $courseid ". keys (%$df->{$courseid}{$forumid});
 			# if ( keys( %{$df->{$courseid}{$forumid}} ) != keys(%$alldf->{$courseid}{$forumid}) ){
 				# print $log "Exception: inc mode error. dfs not initialized properly";
@@ -320,18 +320,18 @@ foreach my $forumrow ( @$forumrows ){
 	my $forumid		= @$forumrow[0];
 	my $coursecode	= @$forumrow[1];
 	$forumtype		= @$forumrow[2];
-	
+
 	my $inst_replied = (($threadtype eq 'inst') || ($threadtype eq 'nota') )?1 :0 ;
 	my $number_of_threads;
 	$number_of_threads = @{$dbh->selectcol_arrayref($countofthreads,undef,$forumid,$coursecode,$inst_replied)}[0];
-	
-	if( $number_of_threads == 0){ 
+
+	if( $number_of_threads == 0){
 		print $log "\n No threads found for $forumid with inst_reply = $inst_replied";
-		next; 
+		next;
 	}
-	
+
 	my @threads = undef;
-	
+
 	if ($threadtype eq 'inst'){
 		print $log "\n Picking threads where an instructor or ta has replied\n";
 		@threads = @{Model::Getthreadids($dbh, $coursecode, $forumid, "inst_replied=1")};
@@ -348,16 +348,16 @@ foreach my $forumrow ( @$forumrows ){
 		print $log "\n Picking all threads";
 		@threads = @{Model::Getthreadids($dbh, $coursecode, $forumid, undef)};
 	}
-	
+
 	print $log "\n Starting to loop over all the threads for $coursecode \t $forumid \n";
 	foreach my $thread (@threads){
 		# collects term frequencies for this thread
 		my $terms	 = ();
 		my $threadid = $thread->[0];
-		
+
 		$poststh->execute($threadid,$coursecode,$forumid) or die $DBI::errstr;
 		my $posts = $poststh->fetchrow_hashref();
-		
+
 		if ($poststh->rows == 0) {
 			print $log "\n No records for $threadid $coursecode $forumid";
 		}
@@ -378,7 +378,7 @@ foreach my $forumrow ( @$forumrows ){
 				($terms, $termfreqhash)= termFreq($terms,$bigrams);
 				if($tf){	updateTermFreq($termfreqhash, \%allterms, 'bi', $threadid, $coursecode, undef, $postId,1);	}
 			}
-			
+
 			$commentssth->execute($postId, $threadid, $coursecode, $forumid) or die $DBI::errstr;
 			my $comments = $commentssth->fetchrow_hashref();
 			while ( defined $comments ){
@@ -403,7 +403,7 @@ foreach my $forumrow ( @$forumrows ){
 			## fetch the next post
 			$posts = $poststh->fetchrow_hashref();
 		}##post loop ends
-		
+
 		## Update document frequncies
 		$df = docFreq($terms, $coursecode, $forumid, $df, $alldf);
 	}##thread loop ends
@@ -421,7 +421,7 @@ sub initializeDFTerms{
 	print $log "\n initializing DFTerms ...\n\n";
 	my $termcounter = 0;
 	my %alldf = ();
-	
+
 	if ($mode eq 'inc'){
 		my $idfmaxquery = "select max(termid) from $idftable ";
 		$termcounter = @{$dbh->selectcol_arrayref($idfmaxquery)}[0];
@@ -433,26 +433,26 @@ sub initializeDFTerms{
 			print $log "\n args: IDFtab: $idftable \n Query: $idfmaxquery ";
 			exit(0);
 		}
-		
+
 		my $idfquery = "select distinct term,termid from $idftable ";
 		print $log "\n $idfquery";
-		
+
 		my @idfterms = @{$dbh->selectall_arrayref($idfquery)};
 		my $num_df_terms = scalar @idfterms;
-		
+
 		print $log "\n $num_df_terms terms found in the DF table";
-		
+
 		if ( $num_df_terms == 0){
 			print $log "\n Exception: can't run inc mode. termDF table is empty \n";
 			print  "\n Exception: can't run inc mode. termDF table is empty \n";
 			exit(0);
 		}
-		
+
 		# $allterms is a hash of terms to termids
 		foreach my $idf_tab_row (@idfterms){
 			$allterms{$idf_tab_row->[0]} = $idf_tab_row->[1];
 		}
-		
+
 		# all terms with their document frequency
 		my $idfrowquery = "select distinct term, forumid, courseid, df from $idftable ";
 		if(defined $courses && scalar @courses ne 0){
@@ -460,11 +460,11 @@ sub initializeDFTerms{
 		}
 		print $log "\n$idfrowquery";
 		my @idfrows = @{$dbh->selectall_arrayref($idfrowquery)};
-		
+
 		foreach my $idf_tab_row (@idfrows){
 			$alldf{$idf_tab_row->[2]}{$idf_tab_row->[1]}{$idf_tab_row->[0]} = $idf_tab_row->[3];
 		}
-		
+
 		#sanity check
 		if(keys %allterms != $num_df_terms){
 			print "Exception: initializeDFTerms: Expected $num_df_terms. Found " . (keys %allterms) ." terms\n";
@@ -478,20 +478,20 @@ sub initializeDFTerms{
 
 sub termFreq{
 	my($tf,$grams) = @_;
-	my %termfreqhash = ();	
+	my %termfreqhash = ();
 	# document frequency
 	foreach ( keys %$grams ) {
 		my $termid;
-		
+
 		if ( !exists $allterms{$_} ){
-			$termcounter++; 
+			$termcounter++;
 			$termid			= $termcounter;
 			$allterms{$_}	= $termid;
 		}
 		else{
 			$termid = $allterms{$_};
 		}
-		
+
 		#update tf for the thread
 		if ( !exists $tf->{$_} ){
 			$tf->{$_} = $grams->{$_};
@@ -508,7 +508,7 @@ sub docFreq{
 	my($tf, $coursecode, $forumid, $df, $alldf) = @_;
 	foreach my $term (keys %$tf)
 	{
-		if ( !exists $df->{$coursecode}{$forumid}{$term} 
+		if ( !exists $df->{$coursecode}{$forumid}{$term}
 				&& !exists $alldf->{$coursecode}{$forumid}{$term} ){
 			$df->{$coursecode}{$forumid}{$term}= 1;
 		}
@@ -531,19 +531,19 @@ sub updateTermFreq{
 	#defer commit by tuning off autocommit
 	$dbh->{AutoCommit} = 1;
 	$dbh->begin_work;
-	
+
 	foreach my $termid ( keys %$termfreqhash )
 	{
 		if ( $ispost eq '1'){
 			if ( $termtype eq 'uni'){
-				$insertunigramssth->execute($termid, $threadid,  $coursecode, 
-														$termidtoterm{$termid}, $termfreqhash->{$termid}, 
+				$insertunigramssth->execute($termid, $threadid,  $coursecode,
+														$termidtoterm{$termid}, $termfreqhash->{$termid},
 														$forumtype, $stem, $stopword, undef, $postid, $ispost)
 											or die "updateTermFreq: Update failed $termid:$threadid:$coursecode";
 			}
 			elsif ( $termtype eq 'bi'){
-				$insertbigramssth->execute($termid, $threadid,  $coursecode, 
-														$termidtoterm{$termid}, $termfreqhash->{$termid}, 
+				$insertbigramssth->execute($termid, $threadid,  $coursecode,
+														$termidtoterm{$termid}, $termfreqhash->{$termid},
 														$forumtype, $stem, $stopword, undef, $postid, $ispost)
 											or die "updateTermFreq: Update failed $termid:$threadid:$coursecode";
 			}
@@ -553,14 +553,14 @@ sub updateTermFreq{
 		}
 		else{
 			if ( $termtype eq 'uni'){
-				$insertunigramssth->execute($termid, $threadid,  $coursecode, 
-														$termidtoterm{$termid}, $termfreqhash->{$termid}, 
+				$insertunigramssth->execute($termid, $threadid,  $coursecode,
+														$termidtoterm{$termid}, $termfreqhash->{$termid},
 														$forumtype, $stem, $stopword, $commentid, $postid, $ispost)
 											or die "Update failed $termid:$threadid:$coursecode";
 			}
 			elsif ( $termtype eq 'bi'){
-				$insertbigramssth->execute($termid, $threadid,  $coursecode, 
-														$termidtoterm{$termid}, $termfreqhash->{$termid}, 
+				$insertbigramssth->execute($termid, $threadid,  $coursecode,
+														$termidtoterm{$termid}, $termfreqhash->{$termid},
 														$forumtype, $stem, $stopword, $commentid, $postid, $ispost)
 											or die "Update failed $termid:$threadid:$coursecode";
 			}
@@ -579,7 +579,7 @@ sub insertIDF{
 	#defer commit by tuning off autocommit
 	$dbh->{AutoCommit} = 1;
 	$dbh->begin_work;
-	
+
 	foreach my $coursecode ( keys %$df ){
 		foreach my $forumid ( keys %{$df->{$coursecode}} ){
 			#sanity check
@@ -595,14 +595,14 @@ sub insertIDF{
 				my $freq = $df->{$coursecode}{$forumid}{$term};
 				if(!exists $alldf->{$coursecode}{$forumid}{$term}){
 					print $log "insert into IDF for $term \n";
-					$insertunigramsidfsth->execute($termid, $term, $freq, 
+					$insertunigramsidfsth->execute($termid, $term, $freq,
 													undef, 0,
 													$coursecode, $forumid)
 					or warn "insert to $idftable failed for \n  \t $termid \t $coursecode \t $forumid\n";
 				}
 				else{
 					print $log "update IDF for $term \n";
-					
+
 					#sanity check
 					my $oldFreq = $alldf->{$coursecode}{$forumid}{$term};
 					#debug
@@ -611,10 +611,10 @@ sub insertIDF{
 						print "\n$termid \t $term \t old:$oldFreq \t new:$freq";
 						exit(0);
 					}
-					
+
 					$updateunigramsidfsth->execute($freq, $termid, $term,
 													$coursecode, $forumid)
-					or warn "update to $idftable failed for \n  \t $termid \t $coursecode \t $forumid\n";					
+					or warn "update to $idftable failed for \n  \t $termid \t $coursecode \t $forumid\n";
 				}
 			}
 			print $log "\n # terms: ".(keys %{$df->{$coursecode}{$forumid}});
