@@ -27,10 +27,12 @@ for row in threads:
         c.execute('UPDATE OR IGNORE post_new SET forumid = ? where thread_id = ?', (forumId,threadId))
         c.execute('UPDATE OR IGNORE comment_new SET forumid = ? where thread_id = ?', (forumId,threadId))
 conn.commit()
+# Update the records in user_new table using post_new records accordingly
 c.execute('''REPLACE into user_new(id, postid, threadid, forumid, courseid)
 select user, id, thread_id, forumid, courseid
 from post_new
 ''')
+# Update the records in user_new table using comment_new records accordingly
 c.execute('''REPLACE into user_new(id, postid, threadid, forumid, courseid)
 select user, id, thread_id, forumid, courseid
 from comment_new
