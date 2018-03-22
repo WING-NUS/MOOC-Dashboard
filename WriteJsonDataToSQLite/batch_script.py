@@ -3,14 +3,18 @@ import sys
 import json
 import sqlite3
 import shlex, subprocess
+import subprocess
 
 #set debug to 1 if you want debug messages throughout the code, else 0.
 debug = 1
+
+cwd = os.getcwd()
 
 def populate_sqlite_db():
     subprocess.run("python writeToSQLite.py", shell=True)
     subprocess.run("python fromOriginalToCanonical.py", shell=True)
     subprocess.run("python transferFromTables.py", shell=True)
+    # subprocess.call(["writeToSQLite.py"])
 
 # def populate_truncated():
 #     subprocess.run("perl make_noinstructor_corpus.pl -dbname coursera -course bVgqTevEEeWvGQrWsIkLlw~DKxwULr1EeaN_w7XVB3P7A -density", shell=True)

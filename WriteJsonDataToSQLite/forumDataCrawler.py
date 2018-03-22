@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 # @Author  : Ann
-# @Time    : 
+# @Time    :
 
 import sqlite3
 import pycurl
@@ -24,6 +24,9 @@ class CourseraForumScraper:
         self.courses = []
 
     def login(self):
+        """This is to log into Coursera using WINGS acocunt.
+        The account details are in config.yml
+        """
         self.driver.get('https://www.coursera.org/?authMode=login')
         email_field = self.driver.find_element_by_name("email")
         password_field = self.driver.find_element_by_name("password")
@@ -32,6 +35,12 @@ class CourseraForumScraper:
         password_field.submit()
 
     def get_cookie(self,CourseName):
+        """
+        This is to get the cookie from browser so that the website will not be refreshed.
+
+        :param CourseName: the name of the course appeeared in web link address
+        :return: the cookie code
+        """
         new_url = 'https://www.coursera.org/learn/%s/discussions' %CourseName
         print new_url
         # course_discussion_urls.append(new_url)
@@ -43,6 +52,16 @@ class CourseraForumScraper:
 
 
     def get_FORUM_info(self,courseId,cookie):
+        '''
+        This is to get the following information from forum page:
+        Json files
+        forumName
+        forumId
+        forumIdAndName
+
+        :param courseId: course id code
+        :param cookie: the cookie code extraced from get_cookie()
+        '''
         ForumUrlAPI = 'https://www.coursera.org/api/onDemandCourseForums.v1?q=course&courseId=%s&limit=500&fields=title,description,parentForumId,order,legacyForumId,forumType,groupForums.v1(title,description,parentForumId,order,forumType)' % courseId
 
         print ForumUrlAPI
