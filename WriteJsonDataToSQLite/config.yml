@@ -7,4 +7,5 @@ inactiveCoursePageNum: 25
 dbPath: './coursera.db'
 db1Path: './coursera1.db'
 db2Path: './coursera2.db'
+termweightsdbPath: './cs6207.db'
 filePath: './data/'
