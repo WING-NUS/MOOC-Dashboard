@@ -87,58 +87,55 @@ c.execute('''CREATE TABLE `post` \
 """Merge user tables from different databases into this merged table."""
 # Set up connection to source database
 conn_temp = sqlite3.connect(db1Path)
-conn_temp.text_factory = str
-c_temp = conn.cursor()
+conn_temp.row_factory = sqlite3.Row
+c_temp = conn_temp.cursor()
 
 # Get the contents from one database
-c_temp.execute('''SELECT photoUrl, courseId, userId, id, learnerId, courseRole, fullName, externalUserId \
-          FROM user ;''')
-output = c_temp.fetchall()   # Returns the results as a list.
-print(output)
+c_temp.execute('''SELECT * FROM user ;''')
+row_1 = c_temp.fetchone()       # Fetch column names from one course database table
+columnNames = row_1.keys()    # Read column names from the course database
 
-# Insert those contents into another table.
-for row in output:
-    c.execute('''INSERT INTO user VALUES \
-          (photoUrl, \
-          courseId, \
-          userId, \
-          id, \
-          learnerId, \
-          courseRole, \
-          fullName, \
-          externalUserId \
-          ) \
-           ;''', row)
+c_temp.execute('''SELECT * FROM user ;''')
+rows1 = c_temp.fetchall()     # Read all rows from Database1
+rows1 = [r[1:] for r in rows1]  # Except first row in rows1 read all rows
+
+ques = []            # Use by sqlite for inserting into table
+ques = ["?"]*len(columnNames[1:])  # Generate list [?, ?, ?, ?,........till length equals length of columnNames[1:]
+ques = ",".join(ques)        # Generate string "?,?,?,?,?........"
+columnNames = ",".join(columnNames[1:]) # Generate string "col1, col2, col3............"
+
+for item in rows1:        # Insert combined data into new Database3
+    c.execute("INSERT INTO user({0}) VALUES ({1})".format(columnNames, ques), item)
 
 conn.commit()
 conn_temp.close()
 
-# Set up connection to source database
-conn_temp = sqlite3.connect(db2Path)
-conn_temp.text_factory = str
-c_temp = conn.cursor()
-
-# Get the contents from one database
-c_temp.execute('''SELECT photoUrl, courseId, userId, id, learnerId, courseRole, fullName, externalUserId \
-          FROM user ;''')
-output = c_temp.fetchall()   # Returns the results as a list.
-
-# Insert those contents into another table.
-for row in output:
-    c.execute('''INSERT INTO user VALUES \
-          (photoUrl, \
-          courseId, \
-          userId, \
-          id, \
-          learnerId, \
-          courseRole, \
-          fullName, \
-          externalUserId \
-          ) \
-           ;''', row)
-
-conn.commit()
-conn_temp.close()
+# # Set up connection to source database
+# conn_temp = sqlite3.connect(db2Path)
+# conn_temp.text_factory = str
+# c_temp = conn_temp.cursor()
+#
+# # Get the contents from one database
+# c_temp.execute('''SELECT photoUrl, courseId, userId, id, learnerId, courseRole, fullName, externalUserId \
+#           FROM user ;''')
+# output = c_temp.fetchall()   # Returns the results as a list.
+#
+# # Insert those contents into another table.
+# for row in output:
+#     c.execute('''INSERT INTO user VALUES \
+#           (photoUrl, \
+#           courseId, \
+#           userId, \
+#           id, \
+#           learnerId, \
+#           courseRole, \
+#           fullName, \
+#           externalUserId \
+#           ) \
+#            ;''', row)
+#
+# conn.commit()
+# conn_temp.close()
 
 # #***********************************merge threads******************************#
 # """Merge thread tables from different databases into this merged table."""
