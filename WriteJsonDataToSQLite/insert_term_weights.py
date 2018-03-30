@@ -53,12 +53,12 @@ columnNames = row_1.keys()    # Read column names from the course database
 
 c_temp.execute('''SELECT * FROM termFreqC14inst ;''')
 rows1 = c_temp.fetchall()     # Read all rows from Database1
-rows1 = [r[1:] for r in rows1]  # Except first row in rows1 read all rows
+rows1 = [r[0:] for r in rows1]  # Except first row in rows1 read all rows
 
 ques = []            # Use by sqlite for inserting into table
-ques = ["?"]*len(columnNames[1:])  # Generate list [?, ?, ?, ?,........till length equals length of columnNames[1:]
+ques = ["?"]*len(columnNames[0:])  # Generate list [?, ?, ?, ?,........till length equals length of columnNames[1:]
 ques = ",".join(ques)        # Generate string "?,?,?,?,?........"
-columnNames = ",".join(columnNames[1:]) # Generate string "col1, col2, col3............"
+columnNames = ",".join(columnNames[0:]) # Generate string "col1, col2, col3............"
 
 for item in rows1:        # Insert combined data into new Database3
     c.execute("INSERT INTO termFreqC14inst({0}) VALUES ({1})".format(columnNames, ques), item)
@@ -70,12 +70,12 @@ columnNames = row_1.keys()    # Read column names from the course database
 
 c_temp.execute('''SELECT * FROM termFreqC14noinst ;''')
 rows1 = c_temp.fetchall()     # Read all rows from Database1
-rows1 = [r[1:] for r in rows1]  # Except first row in rows1 read all rows
+rows1 = [r[0:] for r in rows1]  # Except first row in rows1 read all rows
 
 ques = []            # Use by sqlite for inserting into table
-ques = ["?"]*len(columnNames[1:])  # Generate list [?, ?, ?, ?,........till length equals length of columnNames[1:]
+ques = ["?"]*len(columnNames[0:])  # Generate list [?, ?, ?, ?,........till length equals length of columnNames[1:]
 ques = ",".join(ques)        # Generate string "?,?,?,?,?........"
-columnNames = ",".join(columnNames[1:]) # Generate string "col1, col2, col3............"
+columnNames = ",".join(columnNames[0:]) # Generate string "col1, col2, col3............"
 
 for item in rows1:        # Insert combined data into new Database3
     c.execute("INSERT INTO termFreqC14noinst({0}) VALUES ({1})".format(columnNames, ques), item)
@@ -87,12 +87,12 @@ columnNames = row_1.keys()    # Read column names from the course database
 
 c_temp.execute('''SELECT * FROM tags ;''')
 rows1 = c_temp.fetchall()     # Read all rows from Database1
-rows1 = [r[1:] for r in rows1]  # Except first row in rows1 read all rows
+rows1 = [r[0:] for r in rows1]  # Except first row in rows1 read all rows
 
 ques = []            # Use by sqlite for inserting into table
-ques = ["?"]*len(columnNames[1:])  # Generate list [?, ?, ?, ?,........till length equals length of columnNames[1:]
+ques = ["?"]*len(columnNames[0:])  # Generate list [?, ?, ?, ?,........till length equals length of columnNames[1:]
 ques = ",".join(ques)        # Generate string "?,?,?,?,?........"
-columnNames = ",".join(columnNames[1:]) # Generate string "col1, col2, col3............"
+columnNames = ",".join(columnNames[0:]) # Generate string "col1, col2, col3............"
 
 for item in rows1:        # Insert combined data into new Database3
     c.execute("INSERT INTO tags({0}) VALUES ({1})".format(columnNames, ques), item)
@@ -104,12 +104,12 @@ columnNames = row_1.keys()    # Read column names from the course database
 
 c_temp.execute('''SELECT * FROM termdf ;''')
 rows1 = c_temp.fetchall()     # Read all rows from Database1
-rows1 = [r[1:] for r in rows1]  # Except first row in rows1 read all rows
+rows1 = [r[0:] for r in rows1]  # Except first row in rows1 read all rows
 
 ques = []            # Use by sqlite for inserting into table
-ques = ["?"]*len(columnNames[1:])  # Generate list [?, ?, ?, ?,........till length equals length of columnNames[1:]
+ques = ["?"]*len(columnNames[0:])  # Generate list [?, ?, ?, ?,........till length equals length of columnNames[1:]
 ques = ",".join(ques)        # Generate string "?,?,?,?,?........"
-columnNames = ",".join(columnNames[1:]) # Generate string "col1, col2, col3............"
+columnNames = ",".join(columnNames[0:]) # Generate string "col1, col2, col3............"
 
 for item in rows1:        # Insert combined data into new Database3
     c.execute("INSERT INTO termdf({0}) VALUES ({1})".format(columnNames, ques), item)
@@ -121,12 +121,12 @@ columnNames = row_1.keys()    # Read column names from the course database
 
 c_temp.execute('''SELECT * FROM termIDF ;''')
 rows1 = c_temp.fetchall()     # Read all rows from Database1
-rows1 = [r[1:] for r in rows1]  # Except first row in rows1 read all rows
+rows1 = [r[0:] for r in rows1]  # Except first row in rows1 read all rows
 
 ques = []            # Use by sqlite for inserting into table
-ques = ["?"]*len(columnNames[1:])  # Generate list [?, ?, ?, ?,........till length equals length of columnNames[1:]
+ques = ["?"]*len(columnNames[0:])  # Generate list [?, ?, ?, ?,........till length equals length of columnNames[1:]
 ques = ",".join(ques)        # Generate string "?,?,?,?,?........"
-columnNames = ",".join(columnNames[1:]) # Generate string "col1, col2, col3............"
+columnNames = ",".join(columnNames[0:]) # Generate string "col1, col2, col3............"
 
 for item in rows1:        # Insert combined data into new Database3
     c.execute("INSERT INTO termIDF({0}) VALUES ({1})".format(columnNames, ques), item)
