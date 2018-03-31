@@ -34,13 +34,10 @@ def update_docid():
     subprocess.run("perl updatedocid.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw", shell=True)
 #
 # def generate_feature():
-#     subprocess.run("perl generatestratCVSamplesfromsingleCourses.pl -course eQJvsjn9EeWJaxK5AT4frw -dbname coursera -folds 5 -uni -allf", shell=True)
-#     subprocess.run("perl generatestratCVSamplesfromsingleCourses.pl -course eQJvsjn9EeWJaxK5AT4frw -dbname coursera -folds 5 -allf", shell=True)
+#     subprocess.run("perl gen_features.pl -course eQJvsjn9EeWJaxK5AT4frw  -dbname coursera  -uni -allf", shell=True)
 #
 # def classifier_model():
-#     subprocess.run("perl 	classify_thread.pl -course bVgqTevEEeWvGQrWsIkLlw~DKxwULr1EeaN_w7XVB3P7A \
-#                    -folds <num of cross validation folds> -w <method to calculate class imbalance counter-weight> \
-#                    -in1 <training_file_for_fold_0> -in2 <test_file_for_fold_0>", shell=True)
+#     subprocess.run("perl predict_thread_intervention.pl -course eQJvsjn9EeWJaxK5AT4frw -w nve -in uni+forum+affir+tlen+nums+nont_course_train+test_0_all.txt -model <one of the model files>", shell=True)
 
 if __name__ == '__main__':
     if debug:
