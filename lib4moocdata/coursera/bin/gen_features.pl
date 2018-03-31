@@ -7,6 +7,7 @@ require 5.0;
 # Author : Muthu Kumar Chandrasekaran
 # Generate Feature Files with Stratified folds for cross-validation
 # Modified in Mar, 2018
+# e.g. cmd line, perl gen_features.pl -course eQJvsjn9EeWJaxK5AT4frw  -dbname coursera  -uni -allf
 #
 ##
 
@@ -178,7 +179,7 @@ my @edm_plus_pdtb_exp		= (95);
 # my @iterations			= (0, 31, 32, 63, 64, 95, 127);
 #my @iterations				= (223, 159, 95, 31, 64);
 # my @iterations			= (256, 479);
-my @iterations				= (95);
+my @iterations				= (63);
 
 #sanity check
 if(!$allfeatures && scalar @iterations > 1){
@@ -331,11 +332,11 @@ foreach my $iter (@iterations){
 		$tprop	 			= $d2;
 		$numsentences 		= $d3;
 		$nonterm_courseref	= $d4;
-		$agree				= $d5;
-		$pdtb_exp			= $d6;
-		$pdtb_imp			= $d7;
-		$viewed				= $d8;
-		$courseref			= $d9;
+		$courseref			= $d5;
+		$agree				= $d6;
+		$pdtb_exp			= $d7;
+		$pdtb_imp			= $d8;
+		$viewed				= $d9;
 	}
 
 	$outfile = "$exp_path/";
@@ -349,12 +350,12 @@ foreach my $iter (@iterations){
 	$outfile  .=  $d2 	? "tprop+"			: "";
 	$outfile  .=  $d3 	? "nums+"			: "";
 	$outfile  .=  $d4 	? "nont_course+"  	: "";
-	$outfile  .=  $d5	? "agree+"			: "";
-	$outfile  .=  $d6 	? "exppdtb+" 		: "";
-	$outfile  .=  $d7 	? "imppdtb+" 		: "";
-	$outfile  .=  $d8 	? "viewedins+" 		: "";
-	$outfile  .=  $d9	? "course+" 		: "";
-
+	$outfile  .=  $d5	? "course+" 		: "";
+	$outfile  .=  $d6	? "agree+"			: "";
+	$outfile  .=  $d7 	? "exppdtb+" 		: "";
+	$outfile  .=  $d8 	? "imppdtb+" 		: "";
+	$outfile  .=  $d9 	? "viewedins+" 		: "";
+	
 	print "\n Features switched on for this iteration $iter: $outfile";
 	print $log "\n Features switched on for this iteration $iter: $outfile";
 
@@ -368,11 +369,12 @@ foreach my $iter (@iterations){
 	$feature_file .= $d2 	? "+tprop"		: "";
 	$feature_file .= $d3 	? "+nums"  		: "";
 	$feature_file .= $d4 	? "+nont_course": "";
-	$feature_file .= $d5 	? "+agree"		: "";
-	$feature_file .= $d6 	? "+exppdtb" 	: "";
-	$feature_file .= $d7 	? "+imppdtb" 	: "";
-	$feature_file .= $d8 	? "+viewedins" 	: "";
-	$feature_file .= $d9	? "+course" 	: "";
+	$feature_file .= $d5	? "+course" 	: "";
+	$feature_file .= $d6 	? "+agree"		: "";
+	$feature_file .= $d7 	? "+exppdtb" 	: "";
+	$feature_file .= $d8 	? "+imppdtb" 	: "";
+	$feature_file .= $d9 	? "+viewedins" 	: "";
+	
 
 	$feature_file .= "_". $courses->[0] . ".txt";
 	
@@ -393,7 +395,7 @@ foreach my $iter (@iterations){
 	open (my $FH1, ">$tmp_file") or die "cannot open $tmp_file for writing \n $!";
 	open (my $FEXTRACT, ">$error_log_file") or die "cannot open features file$!";
 
-	FeatureExtraction::generateTrainingFile(	$FH1, $dbh, $mysqldbname, \%threadcats,
+	FeatureExtraction::generateTrainingFile($FH1, $dbh, $mysqldbname, \%threadcats,
 												$unigrams, $freqcutoff, $stem, $term_length_cutoff, $tftype, $idftype,
 												$tprop, $numw, $numsentences,
 												$courseref, $nonterm_courseref, $affirmations, $agree,

@@ -64,15 +64,6 @@ sub generateTrainingFile{
 		die "\n Exception: Corpus undef";
 	}
 	
-	my $total_num_threads	= 0;
-	if($unigrams){
-		$total_num_threads		= Model::getNumValidThreads($dbh,$corpus);
-		if ($total_num_threads	== 0){
-			die "Exception in generateTrainingFile: # threads is zero in the corpus\n";
-		}
-		print "\n Number of valid threads \t $total_num_threads";
-	}
-	
 	my $lexical = 0;
 	my $lengthf = 0;
 	my $time	= 0;
@@ -203,7 +194,7 @@ sub generateTrainingFile{
 	my $termsstem;
 
 	if($unigrams){
-		$terms	=	Model::getalltermIDF($dbh,$freqcutoff,0,$corpus);
+		$terms	=	Model::getalltermIDF($dbh,$freqcutoff,0,undef);
 		#sanity check
 		if (keys %{$terms} == 0 ){
 			print "Exception: termIDFs are empty for $corpus_type. Check the tables and the query!\n @$corpus";
@@ -298,7 +289,7 @@ sub generateTrainingFile{
 		my $cmntsth = $dbh->prepare($cmntqry)
 								or die " prepare for $cmntqry failed \n";
 		
-		my $posttimesth = $dbh->prepare("select p.id,p.post_time from $posttable p, user u
+		my $posttimesth = $dbh->prepare("select p.id,p.post_time from $posttable p, user_new u
 											where p.thread_id = ? and p.courseid = ?
 											and (u.user_title not in (\"Instructor\",\"Staff\",\"Coursera Staff\", \"Community TA\",\"Coursera Tech Support\")
 												or u.user_title is null)
@@ -307,7 +298,7 @@ sub generateTrainingFile{
 											and u.forumid = p.forumid
 											and u.postid = p.id
 											order by 1") or die $dbh->errstr;
-		my $commenttimesth= $dbh->prepare("select p.id,p.post_time from $commenttable p, user u
+		my $commenttimesth= $dbh->prepare("select p.id,p.post_time from $commenttable p, user_new u
 											where p.thread_id = ? and p.courseid = ?
 											and (u.user_title not in (\"Instructor\",\"Staff\",\"Coursera Staff\", \"Community TA\",\"Coursera Tech Support\")
 												or u.user_title is null)
@@ -323,8 +314,9 @@ sub generateTrainingFile{
 			my $courseid			= $_->[2];
 			my $label				= $_->[3];
 			my $forumid_number		= $_->[5];
-	
-			#my $num_threads = $num_threads_coursewise->{$courseid};
+			
+			#print "\n $threadid \t $docid \t $courseid \t $label \t $forumid_number";
+			
 			my $num_interventions = $num_interventions_coursewise->{$courseid};
 
 			#traverse post by post to aggregate post level features 
@@ -340,9 +332,9 @@ sub generateTrainingFile{
 			}
 			
 			$threadPostlength{$docid} = 
-				@{$dbh->selectcol_arrayref("select count(id) from $posttable where thread_id = $threadid and courseid =\'$courseid\'")}[0];
+				@{$dbh->selectcol_arrayref("select count(id) from $posttable where thread_id = \'$threadid\' and courseid =\'$courseid\'")}[0];
 			$threadCommentlength{$docid} = 
-				@{$dbh->selectcol_arrayref("select count(id) from $commenttable where thread_id = $threadid and courseid =\'$courseid\'")}[0];
+				@{$dbh->selectcol_arrayref("select count(id) from $commenttable where thread_id = \'$threadid\' and courseid =\'$courseid\'")}[0];
 			$numposts{$docid} = $threadPostlength{$docid} + $threadCommentlength{$docid};
 			
 			if($numposts{$docid} == 0 || $threadPostlength{$docid} == 0){
@@ -351,16 +343,16 @@ sub generateTrainingFile{
 			}
 			
 			$thread_length{$docid} = @{$dbh->selectcol_arrayref("select sum(length(post_text)) from $posttable where 
-																thread_id = $threadid and courseid = \'$courseid\'")}[0];
+																thread_id = \'$threadid\' and courseid = \'$courseid\'")}[0];
 			my $num_comment_words = @{$dbh->selectcol_arrayref("select sum(length(comment_text)) from $commenttable where 
-															thread_id = $threadid and courseid = \'$courseid\'")}[0];
+																thread_id = \'$threadid\' and courseid = \'$courseid\'")}[0];
 			if(defined $num_comment_words){	
 				$thread_length{$docid} += $num_comment_words;
 			}
 			
 			# log thread id and skip this thread/document
 			if ( $thread_length{$docid} == 0 ){ 
-				print LOG "Empty thread: $docid $courseid $threadid \n"; 
+				print LOG "Empty thread: \t $docid \t $courseid \t $threadid \n"; 
 				next;
 			}
 		
@@ -552,7 +544,7 @@ sub generateTrainingFile{
 				}
 			}
 			
-			foreach my $post ( sort {$a <=> $b} keys %$posts){
+			foreach my $post ( keys %$posts){
 				my $postText = $posts->{$post}{'post_text'};
 				$postText = Preprocess::replaceURL($postText);
 				$postText = Preprocess::replaceMath($postText);
@@ -601,7 +593,7 @@ sub generateTrainingFile{
 				
 				$cmntsth->execute($threadid, $courseid, $post) or die "failed to execute $cmntqry";
 				my $comments = $cmntsth->fetchall_hashref('id');
-				foreach my $comment ( sort {$a <=> $b} keys %$comments){
+				foreach my $comment ( keys %$comments){
 					my $commentText = $comments->{$comment}{'comment_text'};
 					$commentText = Preprocess::replaceURL($commentText);
 					$commentText = Preprocess::replaceMath($commentText);
@@ -883,8 +875,8 @@ sub generateTrainingFile{
 	}
 	
 	if($numsentences){
-		print "MAX & MIN numsentences: $maxnumsentences \t $minnumsentences\n";
-		print "MAX & MIN avg numsentences: $maxavgnumsentences \t $minavgnumsentences\n";
+		print "\n MAX & MIN numsentences: $maxnumsentences \t $minnumsentences";
+		print "\n MAX & MIN avg numsentences: $maxavgnumsentences \t $minavgnumsentences";
 		checkmaxminexception($maxnumsentences , $minnumsentences, 'number of sentences');
 		checkmaxminexception($maxavgnumsentences , $minavgnumsentences, 'avg number of sentences');
 		checkmaxminexception($maxnumsentences_first , $minnumsentences_first, 'number of sentences first');
@@ -950,7 +942,6 @@ sub generateTrainingFile{
 			$termWeights = computeTFIDFs(	\%termFrequencies,
 											$terms, 	## sends per course IDF weights 
 											$term_course,
-											$total_num_threads,
 											$corpus_type,
 											$dbh,
 											$tftype	#uses normalised tf without idf
@@ -959,6 +950,7 @@ sub generateTrainingFile{
 			print "\n Exception... termweights matrix is empty ";
 			print $log "\n Exception... termweights matrix is empty "; exit(0);
 		}
+		print $log "\n unigrams computed";
 	}
 	
 	# will store term vectors from both +ve adn -ve thread categories
@@ -1003,8 +995,10 @@ sub generateTrainingFile{
 			my $num_interventions	= $num_interventions_coursewise->{$courseid};
 			
 			if(!defined $threadid){
-				print "\n $category_id $posttable $commenttable $threads";
-				exit(0);
+				print "\n thread id not defined. $category_id $posttable $commenttable $threads";
+				print "\n rest -- $docid $courseid $forumname $forumid_number";
+				next;
+				#exit(0);
 			}
 			
 			$poststh->execute($threadid, $courseid) 
@@ -1673,7 +1667,7 @@ sub averageTermIDF{
 
 sub computeTFIDFs{
 	my ($termFrequencies, $termIDFs, 
-		$term_course, $num_threads, 
+		$term_course, 
 		$corpus_type, $dbh, $tftype) = @_;
 	
 	if(!defined $termIDFs || keys %$termIDFs eq 0){
@@ -1739,10 +1733,16 @@ sub computeTFIDFs{
 				}
 				
 				###idf
-				my $df		= $termIDFs->{$termid}{'sumdf'};
-				my $term	= $termIDFs->{$termid}{'term'};
-				my $num_courses_term = keys %{$term_course->{$termid}};
+				my $df; my $term; my $num_courses_term;
 				my $idf = 0;
+				if (!exists $termIDFs->{$termid}){
+					$df = 0;
+					$term = 'UNK';
+				}else{
+					$df = $termIDFs->{$termid}{'sumdf'};
+					$term = $termIDFs->{$termid}{'term'};
+					$num_courses_term = keys %{$term_course->{$termid}};
+				}
 				
 				if (!defined $term){
 					print "\n computeTFIDFs: Exception: $termid \t $term not found in TF table ";
@@ -1753,12 +1753,11 @@ sub computeTFIDFs{
 					exit(0);
 				}
 
-				if (!defined $num_threads){
-					die "\n computeTFIDFs: Exception: num_threads not read. $courseid";
+				if ($df == 0){	
+					$idf = 0;	
+				}else{
+					$idf = $tot_num_threads / $df;
 				}
-				
-				if ($df == 0){	$idf = 0;	}
-				$idf = $tot_num_threads / $df;
 
 				###round off idf score to 3 decimal places
 				$idf = sprintf("%.3f", $idf);
