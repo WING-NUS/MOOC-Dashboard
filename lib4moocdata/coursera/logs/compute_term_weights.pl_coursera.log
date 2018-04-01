@@ -1,4 +1,18 @@
 
  Using database file at C:/Users/kevin/OneDrive/Documents/FYP/Muthu's api/lib4moocdata/coursera/bin/../data/coursera
  threadtype.. inst	 tftab: termFreqC14inst 	 posttab: post2 	 commenttab: comment2 
+ Initializing terms...
+ initializing DFTerms ...
+
+
+ select distinct term,termid from termDF 
+ 81285 terms found in the DF table
+select distinct term, forumid, courseid, df from termDF   where   courseid  in (  'eQJvsjn9EeWJaxK5AT4frw' ) 
+ Initialization complete.
+
+
+ Current term counter 81930
  Using data from Errata, Lecture, Homework, Exam forumtypes
+ Picking threads where an instructor or ta has replied
+
+ Starting to loop over all the threads for eQJvsjn9EeWJaxK5AT4frw 	 dfSoKyj3EeaZ8Apto8QB_w 

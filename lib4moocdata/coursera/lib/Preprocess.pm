@@ -25,30 +25,30 @@ use Config::Simple;
 
 sub stem{
 	my($tokens, $type) = @_;
-	
+
 	if(!defined $tokens || !defined $type){
 		warn "Undefined tokens or stemmer type!";
 		return $tokens;
 	}
-	
+
 	my @stemmed_tokens;
-	
+
 	if('snow'){
 		my $stemmer = Lingua::Stem::Snowball->new(
-			lang     => 'en', 
+			lang     => 'en',
 			encoding => 'UTF-8',
 		);
 		die $@ if $@;
 		foreach (@$tokens){
 			push @stemmed_tokens, $stemmer->stem($_);
-		}	
+		}
 	}
 	elsif('singular'){
 		foreach (@$tokens){
 			push @stemmed_tokens, to_singular($_);
 		}
 	}
-	
+
 	return \@stemmed_tokens;
 }
 
@@ -67,13 +67,13 @@ sub getTokens{
 				foreach my $w (@$word){
 					push @{$tokens}, $w;
 				}
-			}		
+			}
 		}
 		else{
 				push @{$tokens}, @{get_tokens($_)} ;
 		}
 	}
-	
+
 	return $tokens;
 }
 
@@ -94,7 +94,7 @@ sub removeStopWords{
 	if( keys %Config eq 0){
 		print "\n Exception: app.ini config not read properly"; exit(0);
 	}
-	
+
 	#local variable
 	my $stopwords;
 	if( $strictness == 4){
@@ -103,20 +103,22 @@ sub removeStopWords{
 		if(!defined $stopwordfile){
 			die "Exception. Stopword file location not configured";
 		}
-		
-		open (my $NONSTOP ,"<$stopwordfile") 
+		# 
+		# print "Debug: $stopwordfile\n";
+
+		open (my $NONSTOP ,"<$stopwordfile")
 					or die "removeStopWords: cannot open nonstopwords.dict for reading";
 		while (<$NONSTOP>){
 			$_ =~ s/\s*(.*)\s*/$1/g;
 			$nonstopword{$_} = 1;
 		}
-		
+
 		#sanity check
-		if (keys %nonstopword == 0){ 
-			print "Exception: nonstopwords.dict not read into the hashtable. Exiting..\n"; 
+		if (keys %nonstopword == 0){
+			print "Exception: nonstopwords.dict not read into the hashtable. Exiting..\n";
 			exit(0);
 		}
-		
+
 		my %stopwordhash = ();
 		foreach (@{Lingua::EN::StopWordList -> new -> words}){
 			$_ =~ s/\s*(.*)\s*/$1/g;
@@ -142,7 +144,7 @@ sub removeStopWords{
 	else{
 		$stopwords = getStopWords('en');
 	}
-	
+
 	foreach my $token (@$tokens){
 		if ( !exists $stopwords->{$token} )
 		{
@@ -168,11 +170,11 @@ sub splitParentheses{
 	}
 	return \@new_sentences;
 }
-	
+
 sub removeOrphanCharacters{
 	my($tokens) = @_;
 	my @tokens_large;
-	
+
 	foreach (@$tokens){
 		$_ =~ s/\s*//g;
 		if(length ($_) >  1){
@@ -190,7 +192,7 @@ sub fixApostrophe{
 		$sentence =~ s/([Ss])\'([sS])/$1$2/g;
 		$sentence =~ s/([eE])\'([sS])/$1$2/g;
 	}
-	
+
 	return $sentences;
 }
 
@@ -227,18 +229,18 @@ sub replaceMath{
 	$text =~ s/[A-Za-z]+\(.*?\)/ <MATH> /g;	#math functions
 	$text =~ s/[A-Za-z]+\[.*?\]/ <MATH> /g;	#math functions
 	$text =~ s/[0-9][\+\*\\\/\~][0-9]/ <MATH> /g; #binary expressions with operators
-	$text =~ s/<MATH>\s*[\+\-\*\\\/\~][0-9]/ <MATH> /g; 
-	
+	$text =~ s/<MATH>\s*[\+\-\*\\\/\~][0-9]/ <MATH> /g;
+
 	$text =~ s/<MATH>\s*[\+\-\*\\\/\~\=]/ <MATH> /g;
 	$text =~ s/[\+\-\*\\\/\~\=]\s*<MATH>/ <MATH> /g;
-	
+
 	$text =~ s/[\+\*\\\/\~]/ <MATH> /g;	#lone  math operators
 	$text =~ s/(<MATH>\s*)+/ <MATH> /g;
 	return $text;
 }
 
 sub replaceURL{
-	my( $text ) = @_;	
+	my( $text ) = @_;
 	$text =~ s/https?\:\/\/[a-zA-Z0-9][a-zA-Z0-9\.\_\?\=\/\%\-\~\&]+/<URLREF>/g;
 	return $text;
 }
