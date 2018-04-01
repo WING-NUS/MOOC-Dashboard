@@ -105,7 +105,7 @@ sub removeStopWords{
 		}
 
 		open (my $NONSTOP ,"<$stopwordfile")
-					or die "removeStopWords: cannot open $stopwordfile nonstopwords.dict for reading";
+					or die "removeStopWords: cannot open $stopwordfile nonstopwords.dict for reading";    # If this is the error, check app,ini for the correct path
 		while (<$NONSTOP>){
 			$_ =~ s/\s*(.*)\s*/$1/g;
 			$nonstopword{$_} = 1;
