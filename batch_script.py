@@ -25,6 +25,14 @@ def populate_intervened_posts():
 
     subprocess.run("perl make_noinstructor_corpus.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw -density", shell=True)
 
+def update_docid():
+    """creates document ids, one per each thread.
+    This is useful when threads from all the courses are in the same database.
+    This is a required field for feature extraction.
+    """
+
+    subprocess.run("perl updatedocid.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw", shell=True)
+
 def compute_term_weights():
     """Compute the term weights and insert into the database.
     Run this method twice in the pipeline to collect TFs and populate it in termfreqc14inst and termfreqc14noinst.
@@ -35,14 +43,6 @@ def compute_term_weights():
     # This is the second round running these two scripts
     subprocess.run("perl compute_term_weights.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw  -uni  -tf -thread inst", shell=True)
     subprocess.run("perl compute_term_weights.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw  -uni  -tf -thread noinst", shell=True)
-
-def update_docid():
-    """creates document ids, one per each thread.
-    This is useful when threads from all the courses are in the same database.
-    This is a required field for feature extraction.
-    """
-
-    subprocess.run("perl updatedocid.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw", shell=True)
 
 def generate_feature():
     subprocess.run("perl gen_features.pl -course eQJvsjn9EeWJaxK5AT4frw  -dbname coursera  -uni -allf", shell=True)
