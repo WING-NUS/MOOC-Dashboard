@@ -103,11 +103,9 @@ sub removeStopWords{
 		if(!defined $stopwordfile){
 			die "Exception. Stopword file location not configured";
 		}
-		# 
-		# print "Debug: $stopwordfile\n";
 
 		open (my $NONSTOP ,"<$stopwordfile")
-					or die "removeStopWords: cannot open nonstopwords.dict for reading";
+					or die "removeStopWords: cannot open $stopwordfile nonstopwords.dict for reading";
 		while (<$NONSTOP>){
 			$_ =~ s/\s*(.*)\s*/$1/g;
 			$nonstopword{$_} = 1;
