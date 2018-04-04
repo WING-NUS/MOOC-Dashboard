@@ -110,7 +110,6 @@ my %f2 				= ();
 my %f4 				= ();
 my %recall 			= ();
 my %precision 		= ();
-my %i_denC_train 	= ();
 my %i_denC_test		= ();
 my %svmweights 		= ();
 my $weight_optimization_search_step = 0.1;
@@ -141,7 +140,7 @@ my %docid_to_courseid = ();
 open (my $result_file, ">$results_path/results_$basename"."_$incourse"."_$weighing.txt") 
 	or die "cannot open $results_path/results_$basename"."_$incourse"."_$weighing.txt for writing";
 # print header	
-print $result_file "FOLD \t # of samples \t P \t R \t F_1 \t +Train% \t idenC_train \t idenC_test \t FPR \t";
+print $result_file "FOLD \t # of samples \t P \t R \t F_1 \t idenC_test \t FPR \t";
 print $result_file "Train_+ve \t Train_-ve \t Test_+ve \t Test_-ve";
 
 my $terms;
@@ -256,7 +255,8 @@ $testing_time += $duration;
 my $matrix	= getContigencyMatrix(\%output);
 	
 printContigencyMatrix($matrix, $result_file);
-savedetailedouput(\%output, $test_data, $output_fold_fh, 1);
+#savedetailedouput(\%output, $test_data, $output_fold_fh, 1);
+savedetailedouput(\%output_details, $test_data, $output_fold_fh, 1);
 
 $precision{0}	= sprintf ("%.3f", getPrecision($matrix) * 100 );
 $recall{0}		= sprintf ("%.3f", getRecall($matrix) * 100 );
@@ -295,7 +295,7 @@ else{
 
 print $result_file "\n $incourse \t $number_of_samples \t $precision{0}\t $recall{0} \t $f1{0}";
 
-print $result_file "\t $i_denC_train{0}\t $i_denC_test{0}\t $fpr\t";
+print $result_file "\t $i_denC_test{0}\t $fpr\t";
 
 print $result_file "\t $num_pos_samples ";
 print $result_file "\t $num_neg_samples ";
@@ -603,16 +603,28 @@ sub untaint{
 
 sub savedetailedouput{
 	my ($foldoutput, $data, $fh, $level) = @_;
-		print $fh "Id \t Ground_Truth \t Prediction";
+		print $fh  "Id \t Prediction Score";
 	foreach my $id ( keys %{$foldoutput} ){
 		if(!defined $level){
 			print $fh "\n $data->{$id}\t";
 		}else{
 			print $fh "\n $id \t";
+			print $fh "$foldoutput->{$id}{'predictvalue'}";
 		}
-		foreach my $label ( keys %{$foldoutput->{$id}} ){
-			print $fh "$label\t$foldoutput->{$id}{$label}";
-		}
+		#foreach my $label ( keys %{$foldoutput->{$id}} ){
+		#	print $fh "$label\t$foldoutput->{$id}{$label}";
+		#}
+	}
+}
+
+
+sub save_detailed_ouput2db{
+	my ($foldoutput, $data) = @_;
+		print  "Id \t Prediction Score";
+	foreach my $id ( keys %{$foldoutput} ){
+		#$id
+		#$foldoutput->{$id}{'predictvalue'}
+		#insert each of these values to the thread table
 	}
 }
 
