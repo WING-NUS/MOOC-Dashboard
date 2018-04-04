@@ -256,7 +256,11 @@ my $matrix	= getContigencyMatrix(\%output);
 	
 printContigencyMatrix($matrix, $result_file);
 #savedetailedouput(\%output, $test_data, $output_fold_fh, 1);
+<<<<<<< HEAD
 savedetailedouput(\%$output_details, $test_data, $output_fold_fh, 1);
+=======
+savedetailedouput(\%output_details, $test_data, $output_fold_fh, 1);
+>>>>>>> 701254e004aedb5c430bcfeda87c1d4617afd3cf
 
 $precision{0}	= sprintf ("%.3f", getPrecision($matrix) * 100 );
 $recall{0}		= sprintf ("%.3f", getRecall($matrix) * 100 );
@@ -603,13 +607,13 @@ sub untaint{
 
 sub savedetailedouput{
 	my ($foldoutput, $data, $fh, $level) = @_;
-		print $fh "Id \t Ground_Truth \t Prediction";
+		print $fh  "Id \t Prediction Score";
 	foreach my $id ( keys %{$foldoutput} ){
 		if(!defined $level){
 			print $fh "\n $data->{$id}\t";
 		}else{
-			#print $fh "\n $id \t";
-			print $fh "$label\t$foldoutput->{$id}{'predictvalue'}";
+			print $fh "\n $id \t";
+			print $fh "$foldoutput->{$id}{'predictvalue'}";
 		}
 		#foreach my $label ( keys %{$foldoutput->{$id}} ){
 		#	print $fh "$label\t$foldoutput->{$id}{$label}";
@@ -620,13 +624,11 @@ sub savedetailedouput{
 
 sub save_detailed_ouput2db{
 	my ($foldoutput, $data) = @_;
-		print $fh "Id \t Ground_Truth \t Prediction";
+		print  "Id \t Prediction Score";
 	foreach my $id ( keys %{$foldoutput} ){
-		#print $fh "\n $data->{$id}\t";
-		print $fh "\n $id \t";
-		foreach my $label ( keys %{$foldoutput->{$id}} ){
-			print $fh "$label\t$foldoutput->{$id}{$label}";
-		}
+		#$id
+		#$foldoutput->{$id}{'predictvalue'}
+		#insert each of these values to the thread table
 	}
 }
 
