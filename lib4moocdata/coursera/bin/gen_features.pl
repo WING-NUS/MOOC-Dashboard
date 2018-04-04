@@ -381,7 +381,7 @@ foreach my $iter (@iterations){
 	my @threads_to_predict = undef;
 	
 	foreach my $serial_id (keys %dataset){
-		addtosample(\%dataset, $serial_id, 'UNK', \@threads_to_predict);
+		addtosample(\%dataset, $serial_id, '+1', \@threads_to_predict);
 	}
 
 	my %threadcats = ();
