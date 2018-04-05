@@ -100,9 +100,7 @@ my $experiments_path	 = "$path/../experiments";
 if(defined $indir){
 	$experiments_path	.= "/$indir";
 }
-else{
-	$experiments_path	.= "/$incourse";
-}
+
 my $results_path		 = "$experiments_path/results";
 
 if(! -d $results_path){
@@ -120,7 +118,6 @@ my %f2 				= ();
 my %f4 				= ();
 my %recall 			= ();
 my %precision 		= ();
-my %i_denC_train 	= ();
 my %i_denC_test		= ();
 my %svmweights 		= ();
 my $weight_optimization_search_step = 0.1;
@@ -130,9 +127,9 @@ my $testing_time 	= 0;
 my $basename	= (split(/_test_/,$in))[0];
 
 #learnt model is written to this model file
-my $model_file = "..models/$basename.model";
+my $model_file = "..models/$basename";
 
-$saved_model = "../models/$saved_model.model";
+$saved_model = "../models/$saved_model";
 
 my @courses;
 
@@ -151,7 +148,7 @@ my %docid_to_courseid = ();
 open (my $result_file, ">$results_path/results_$basename"."_$incourse"."_$weighing.txt")
 	or die "cannot open $results_path/results_$basename"."_$incourse"."_$weighing.txt for writing";
 # print header
-print $result_file "FOLD \t # of samples \t P \t R \t F_1 \t +Train% \t idenC_train \t idenC_test \t FPR \t";
+print $result_file "FOLD \t # of samples \t P \t R \t F_1 \t idenC_test \t FPR \t";
 print $result_file "Train_+ve \t Train_-ve \t Test_+ve \t Test_-ve";
 
 my $terms;
@@ -161,11 +158,10 @@ my $weight		= 1;
 my %data_to_shuffle_mapping = ();
 
 my $lastname	= (split(/_test/,$in))[1];
-$lastname =~ s/(\_)[0-9](.*\.?txt)/$1$i$2/;
+$lastname =~ s/(\_)[0-9](.*\.?txt)/$1$2/;
 
 my $test_data_file		= "$experiments_path/$in";
 
-print "\n Training Data File: $training_data_file ";
 print "\n Test Data File: $test_data_file ";
 
 my $test_data; my $ground_truth;
@@ -179,8 +175,8 @@ if($number_of_samples == 0){
 	print "\n Exception: zero samples read! Check test data file.\n"; exit(0);
 }
 
-open (my $output_fold_fh, ">$results_path"."/results_dtl_".(split (/\./,$in1))[0]."_$i"."_$weighing.txt")
-	or die "cannot open $experiments_path/results_dtl....txt";
+open (my $output_fold_fh, ">$results_path"."/results_dtl_".(split (/\./,$in))[0]."_$weighing.txt")
+	or die "cannot open $experiments_path/results_dtl*.txt";
 
 my ($sec,$min,$hour,@rest)	=  localtime(time);
 my $start_timestamp 		= ($hour*60*60)+($min*60)+($sec);
@@ -190,7 +186,7 @@ my $init_weight = 1;
 
 if ($weighing eq 'nve'){
 		print $log "\n Setting naive class weights.";
-		print $log "\n $init_weight for fold $i";
+		print $log "\n $init_weight";
 		$weight =  $init_weight;
 }
 else{
@@ -199,8 +195,6 @@ else{
 	Help();
 	exit(0);
 }
-
-printf $con_matrices_file "\t %0.3f", $weight;
 
 #my $learner 	 = getClassifier($weight);
 #my $training_set = Algorithm::LibLinear::DataSet->load(filename => "$experiments_path/DATA.train");
@@ -218,8 +212,8 @@ my ($sec1,$min1,$hour1,@rest) = localtime(time);
 my $end_timestamp = ($hour1*60*60)+($min1*60)+($sec1);
 my $duration = $end_timestamp - $start_timestamp;
 $training_time += $duration;
-printf $log "\n Training time for fold $i:\t%02d second(s) \n", $duration;
-printf "\n Training time for fold $i:\t%02d second(s) \n", $duration;
+printf $log "\n Training time: \t%02d second(s) \n", $duration;
+printf "\n Training time :\t%02d second(s) \n", $duration;
 
 ($sec,$min,$hour,@rest) =   localtime(time);
 $start_timestamp = ($hour*60*60)+($min*60)+($sec);
@@ -269,13 +263,14 @@ $testing_time += $duration;
 my $matrix	= getContigencyMatrix(\%output);
 
 printContigencyMatrix($matrix, $result_file);
-savedetailedouput(\%output, $test_data, $output_fold_fh, 1);
+#savedetailedouput(\%output, $test_data, $output_fold_fh, 1);
+savedetailedouput(\%output_details, $test_data, $output_fold_fh, 1);
 
-$precision{$i}	= sprintf ("%.3f", getPrecision($matrix) * 100 );
-$recall{$i}		= sprintf ("%.3f", getRecall($matrix) * 100 );
-$f1{$i}			= sprintf ("%.3f", computeF_m($matrix,1) * 100 );
-$f2{$i}			= sprintf ("%.3f", computeF_m($matrix,2) * 100 );
-$f4{$i}			= sprintf ("%.3f", computeF_m($matrix,4) * 100 );
+$precision{0}	= sprintf ("%.3f", getPrecision($matrix) * 100 );
+$recall{0}		= sprintf ("%.3f", getRecall($matrix) * 100 );
+$f1{0}			= sprintf ("%.3f", computeF_m($matrix,1) * 100 );
+$f2{0}			= sprintf ("%.3f", computeF_m($matrix,2) * 100 );
+$f4{0}			= sprintf ("%.3f", computeF_m($matrix,4) * 100 );
 
 my $num_pos_samples = ($matrix->{'tp'} + $matrix->{'fn'});
 my $num_neg_samples = ($matrix->{'fp'} + $matrix->{'tn'});
@@ -300,19 +295,15 @@ $f1_at_100r	= sprintf ("%.3f", $f1_at_100r * 100 );
 $f4_at_100r	= sprintf ("%.3f", $f4_at_100r * 100 );
 
 if ( $num_neg_samples ne 0){
-	$i_denC_test{$i}  = sprintf ("%.3f", $num_pos_samples / $num_neg_samples );
+	$i_denC_test{0}  = sprintf ("%.3f", $num_pos_samples / $num_neg_samples );
 }
 else{
-	$i_denC_test{$i}  = 0;
+	$i_denC_test{0}  = 0;
 }
 
-print $result_file "\n $incourse \t $number_of_samples \t $precision{$i}\t $recall{$i} \t $f1{$i}";
+print $result_file "\n $incourse \t $number_of_samples \t $precision{0}\t $recall{0} \t $f1{0}";
 
-print $result_file "\t $training_positive ";
-print $result_file "\t $i_denC_train{$i}\t $i_denC_test{$i}\t $fpr\t";
-
-print $result_file "\t $trainingset_distribution{'+'} ";
-print $result_file "\t $trainingset_distribution{'-'} ";
+print $result_file "\t $i_denC_test{0}\t $fpr\t";
 
 print $result_file "\t $num_pos_samples ";
 print $result_file "\t $num_neg_samples ";
@@ -620,16 +611,28 @@ sub untaint{
 
 sub savedetailedouput{
 	my ($foldoutput, $data, $fh, $level) = @_;
-		print $fh "Id \t Ground_Truth \t Prediction";
+		print $fh  "Id \t Prediction Score";
 	foreach my $id ( keys %{$foldoutput} ){
 		if(!defined $level){
 			print $fh "\n $data->{$id}\t";
 		}else{
 			print $fh "\n $id \t";
+			print $fh "$foldoutput->{$id}{'predictvalue'}";
 		}
-		foreach my $label ( keys %{$foldoutput->{$id}} ){
-			print $fh "$label\t$foldoutput->{$id}{$label}";
-		}
+		#foreach my $label ( keys %{$foldoutput->{$id}} ){
+		#	print $fh "$label\t$foldoutput->{$id}{$label}";
+		#}
+	}
+}
+
+
+sub save_detailed_ouput2db{
+	my ($foldoutput, $data) = @_;
+		print  "Id \t Prediction Score";
+	foreach my $id ( keys %{$foldoutput} ){
+		#$id
+		#$foldoutput->{$id}{'predictvalue'}
+		#insert each of these values to the thread table
 	}
 }
 
