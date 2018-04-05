@@ -19,7 +19,11 @@ use Getopt::Long;
 my $path;	# Path to binary directory
 
 BEGIN{
+<<<<<<< HEAD
 	if ($FindBin::Bin =~ /(.*)/)
+=======
+	if ($FindBin::Bin =~ /(.*)/) 
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	{
 		$path  = $1;
 	}
@@ -38,7 +42,11 @@ my $datahome = "$path/experiments";
 sub Help {
 	print STDERR "Usage: $progname -h\t[invokes help]\n";
   	print STDERR "       $progname -folds -in -indir[-cv|holdc -w -test -debug -q quiet]\n";
+<<<<<<< HEAD
 	print STDERR "Options:\n";
+=======
+	print STDERR "Options:\n";	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	print STDERR "\t-folds	\t # of folds for cross validation.\n";
 	print STDERR "\t-indir	\t input directory\n";
 	print STDERR "\t-in	  	\t input data file name in $datahome .\n";
@@ -57,6 +65,7 @@ my $dbname = undef;
 my $incourse;
 my $saved_model = undef;
 
+<<<<<<< HEAD
 my $i;
 my $training_data_file;
 my $in1;
@@ -65,12 +74,18 @@ my $training_positive;
 my %trainingset_distribution;
 
 
+=======
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 $help = 1 unless GetOptions(
 				'dbname=s'	=>	\$dbname,
 				'course=s'	=>	\$incourse,
 				'in=s'		=>	\$in,
 				'indir=s'	=>	\$indir,   #redundant if  -course specified
+<<<<<<< HEAD
 				'stem'		=>	\$stem,
+=======
+				'stem'		=>	\$stem,    
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 				'i'			=>	\$interactive,
 				'w=s'		=>	\$weighing,
 				'model=s'	=>	\$saved_model,
@@ -145,9 +160,15 @@ if($num_courses == 0){
 my $counter = 0;
 my %docid_to_courseid = ();
 
+<<<<<<< HEAD
 open (my $result_file, ">$results_path/results_$basename"."_$incourse"."_$weighing.txt")
 	or die "cannot open $results_path/results_$basename"."_$incourse"."_$weighing.txt for writing";
 # print header
+=======
+open (my $result_file, ">$results_path/results_$basename"."_$incourse"."_$weighing.txt") 
+	or die "cannot open $results_path/results_$basename"."_$incourse"."_$weighing.txt for writing";
+# print header	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 print $result_file "FOLD \t # of samples \t P \t R \t F_1 \t idenC_test \t FPR \t";
 print $result_file "Train_+ve \t Train_-ve \t Test_+ve \t Test_-ve";
 
@@ -175,7 +196,11 @@ if($number_of_samples == 0){
 	print "\n Exception: zero samples read! Check test data file.\n"; exit(0);
 }
 
+<<<<<<< HEAD
 open (my $output_fold_fh, ">$results_path"."/results_dtl_".(split (/\./,$in))[0]."_$weighing.txt")
+=======
+open (my $output_fold_fh, ">$results_path"."/results_dtl_".(split (/\./,$in))[0]."_$weighing.txt") 
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	or die "cannot open $experiments_path/results_dtl*.txt";
 
 my ($sec,$min,$hour,@rest)	=  localtime(time);
@@ -234,22 +259,39 @@ my %output = (); my $j = 0;
 foreach my $test_instance (@$test_set_array_ref) {
 	my $label	 = $test_instance->{'label'};
 	my $features = $test_instance->{'feature'};
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	# Determines which (+1 or -1) class should the test instance be assigned to
 	# based on its feature vector.
 	my $prediction = $classifier->predict(feature => $features);
 	my $predict_values = $classifier->predict_values(feature => $features);
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	$output{$testset_docids[$j]}{$label} = $prediction;
 	$output{$testset_docids[$j]}{$label} = $prediction;
 	$output_details{$testset_docids[$j]} = +{	serialid 		=> $j,
 												course			=> $incourse,
+<<<<<<< HEAD
 												label 			=> $label,
 												prediction 		=> $prediction,
 												predictvalue	=> $predict_values->[0],
 												features		=> $features
 											};
 
+=======
+												label 			=> $label, 
+												prediction 		=> $prediction, 
+												predictvalue	=> $predict_values->[0],
+												features		=> $features
+											};
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	$j++;
 }
 $j = 0;
@@ -261,10 +303,21 @@ $duration = $end_timestamp - $start_timestamp;
 $testing_time += $duration;
 
 my $matrix	= getContigencyMatrix(\%output);
+<<<<<<< HEAD
 
 printContigencyMatrix($matrix, $result_file);
 #savedetailedouput(\%output, $test_data, $output_fold_fh, 1);
 savedetailedouput(\%output_details, $test_data, $output_fold_fh, 1);
+=======
+	
+printContigencyMatrix($matrix, $result_file);
+#savedetailedouput(\%output, $test_data, $output_fold_fh, 1);
+<<<<<<< HEAD
+savedetailedouput(\%$output_details, $test_data, $output_fold_fh, 1);
+=======
+savedetailedouput(\%output_details, $test_data, $output_fold_fh, 1);
+>>>>>>> 701254e004aedb5c430bcfeda87c1d4617afd3cf
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 
 $precision{0}	= sprintf ("%.3f", getPrecision($matrix) * 100 );
 $recall{0}		= sprintf ("%.3f", getRecall($matrix) * 100 );
@@ -335,12 +388,20 @@ sub getFold{
 
 sub getClassifier{
 	my ($weight,$solver_type) = @_;
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	if(!defined $solver_type){
 		$solver_type = 'L1R_LR';
 	}
 	## Instantiate Liblinear SVM with the weight
+<<<<<<< HEAD
 	# Constructs a model either
+=======
+	# Constructs a model either 
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	# a) L2-regularized L2 loss support vector classification.
 	# b) L1-regularized Logit model
 	my $learner = Algorithm::LibLinear->new(
@@ -357,9 +418,15 @@ sub getClassifier{
 sub test{
 	my ($filename, $path, $model) = @_;
 	my $test_set	= Algorithm::LibLinear::DataSet->load(filename => "$path/$filename");
+<<<<<<< HEAD
 
 	my $test_set_array_ref = $test_set->{'data_set'};
 
+=======
+	
+	my $test_set_array_ref = $test_set->{'data_set'};
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	my %output = ();
 	my $test_inst_id = 0;
 	foreach my $test_instance (@$test_set_array_ref) {
@@ -368,6 +435,7 @@ sub test{
 
 		my $prediction = $model->predict(feature => $features);
 		my $predict_values = $model->predict_values(feature => $features);
+<<<<<<< HEAD
 
 		$output{$test_inst_id}{$label} = $prediction;
 		$test_inst_id ++;
@@ -375,13 +443,26 @@ sub test{
 
 	my $matrix = getContigencyMatrix(\%output);
 
+=======
+		
+		$output{$test_inst_id}{$label} = $prediction;
+		$test_inst_id ++;
+	}
+	
+	my $matrix = getContigencyMatrix(\%output);
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	my $f1	= sprintf ("%.3f", computeF_m($matrix,1) * 100 );
 	return $f1;
 }
 
 sub writeDataFile{
 	my ($filename, $path, $data) = @_;
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	#create data file
 	open CVTRAIN, ">$path/$filename";
 	foreach my $j (keys %$data){
@@ -389,7 +470,11 @@ sub writeDataFile{
 	}
 	close CVTRAIN;
 }
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 sub getCourseid{
 	my $courses = shift;
 	foreach my $course (@$courses){
@@ -409,7 +494,11 @@ sub microAverageF_m{
 	my $numera =  (1+($beta*$beta)) * ($precision*$recall);
 	my $denom = ($beta*$beta*$precision)+$recall;
 	my $f_m = ($denom == 0) ? 0: ($numera/$denom);
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	return $f_m;
 }
 
@@ -426,7 +515,11 @@ sub computeF_m{
 sub getContigencyMatrix{
 	my $output = shift ;
 	my %matrix = ();
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	$matrix{'tp'} = 0;
 	$matrix{'fp'} = 0;
 	$matrix{'tn'} = 0;
@@ -435,7 +528,11 @@ sub getContigencyMatrix{
 	$matrix{'-'}  = 0;
 
 	for my $id (keys %$output){
+<<<<<<< HEAD
 		for my $label (keys %{$output->{$id}}){
+=======
+		for my $label (keys %{$output->{$id}}){	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 			if( $label eq 1 ){
 				if ( $output->{$id}{$label} eq 1){
 					$matrix{'tp'} ++;
@@ -465,7 +562,11 @@ sub printContigencyMatrix{
 	print "Predicted +|\t$matrix->{'tp'}|\t$matrix->{'fp'}|\n";
 	print "Predicted -|\t$matrix->{'fn'}|\t$matrix->{'tn'}|\n";
 	print "------------------------------\n";
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	if (defined $FH){
 		# print $FH "\n------------------------------\n";
 		# print $FH "\tActual +\tActual -\n";
@@ -516,7 +617,11 @@ sub microAveragedRecall{
 sub average{
 	my($hash) = @_;
 	my $average = 0;
+<<<<<<< HEAD
 	foreach (keys %$hash){
+=======
+	foreach (keys %$hash){		
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 		$average += $hash->{$_} ;
 		#print "\n Hash value: $_ \t $hash->{$_}";
 	}
@@ -531,11 +636,19 @@ sub weightedAverage{
 	my $average = 0;
 	my $number_of_samples = 0;
 	my $weight_sum = 0;
+<<<<<<< HEAD
 
 	foreach my $fold (keys %$size){
 		$number_of_samples += $size->{$fold};
 	}
 
+=======
+	
+	foreach my $fold (keys %$size){
+		$number_of_samples += $size->{$fold};
+	}
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	foreach (keys %$hash){
 		my $weight = $size->{$_}/$number_of_samples;
 		$weight_sum += $weight;
@@ -559,23 +672,40 @@ sub getSwitch{
 	print  "\n 6. Quit";
 	print  "\n Enter an analysis option: ";
 	my $switch = <STDIN>;
+<<<<<<< HEAD
 	$switch = untaint($switch);
+=======
+	$switch = untaint($switch);	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	return $switch;
 }
 
 sub printFeatureVector{
 	my($dbh,$docid) = @_;
+<<<<<<< HEAD
 
 	my($threadid,$courseid) = Model::getthread($dbh,$docid);
 	print "\n--------------------------------------------------------";
 	print "\n THREAD: $threadid \t DOCID: $docid \t COURSE : $courseid\n";
 
+=======
+	
+	my($threadid,$courseid) = Model::getthread($dbh,$docid);
+	print "\n--------------------------------------------------------";
+	print "\n THREAD: $threadid \t DOCID: $docid \t COURSE : $courseid\n";
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	my $termfreq;
 	$termfreq = Model::getterms($dbh,$threadid,$courseid,$docid);
 
 	my %termindex =();
+<<<<<<< HEAD
 
 	foreach my $termid (keys %$termfreq){
+=======
+	
+	foreach my $termid (keys %$termfreq){		
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 		#my $termidf = Model::gettermIDF($dbh,$termid,$stem);
 		#my $tfidf = $termfreq->{$termid}{'sumtf'} * $termidf;
 		#push (my @termrow, ($termid, $_->[1], $_->[2], $termidf, $tfidf));
@@ -593,7 +723,11 @@ sub printFeatureVector{
 sub makehashcopy{
 	my ($hash2d) = @_;
 	my %copy = ();
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	foreach my $k1 (keys %$hash2d){
 		foreach my $k2 (keys %{$hash2d->{$k1}} ){
 			$copy{$k1}{$k2} = $hash2d->{$k1}{$k2};
@@ -646,7 +780,11 @@ sub deduplicate_array{
 
 sub readFeatureFile{
 	my ($in, $ground_truth)	=	@_;
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 	print "\n Reading $in";
 	my %data = ();
 	open DATA, "<$in" or die "Cannot open $in";
@@ -657,20 +795,36 @@ sub readFeatureFile{
 		my @line = (split /\t/, $_);
 		$line[0] =~ s/\s*$//g;
 		my $docid = $line[0];
+<<<<<<< HEAD
 
 		my $dataline = join ("\t", @line[1..$#line]);
 		$dataline =~ s/^\s*(.*)\s*$/$1/;
 
+=======
+		
+		my $dataline = join ("\t", @line[1..$#line]);
+		$dataline =~ s/^\s*(.*)\s*$/$1/;
+		
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 		# extract label and record as ground truth
 		my $label	= $line[1];
 		$label		=~ s/\s+//g;
 		$ground_truth->{$docid} = $label;
+<<<<<<< HEAD
 
 		if( !exists $data{$docid} ){
 			$data{$docid} = $dataline;
 		}else{
 			# print "\n docid: $docid ";		#  . (split /\t/, $dataline)[0];
 			#print "\n Existing: $data{$docid}";	# . (split /\t/, $data{$docid})[0] ."\n";
+=======
+		
+		if( !exists $data{$docid} ){
+			$data{$docid} = $dataline;
+		}else{
+			# print "\n docid: $docid ";		#  . (split /\t/, $dataline)[0]; 
+			#print "\n Existing: $data{$docid}";	# . (split /\t/, $data{$docid})[0] ."\n"; 
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
 		}
 	}
 	close DATA;
@@ -681,4 +835,8 @@ sub readFeatureFile{
 # Executes cross validation.
 #my $accuracy = $learner->cross_validation(data_set => $data_set, num_folds => 5);
 #print "ACC: $accuracy\n";
+<<<<<<< HEAD
 =cut
+=======
+=cut
+>>>>>>> 30049ac37c250abccf6b0497e8fce81bae80e69b
