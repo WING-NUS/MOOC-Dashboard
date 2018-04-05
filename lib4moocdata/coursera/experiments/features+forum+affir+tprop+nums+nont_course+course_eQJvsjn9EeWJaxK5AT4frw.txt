@@ -1,0 +1,26 @@
+81946	tlen:#posts in thread
+81947	tlen:#comments in thread
+81948	tlen:#posts+#comments
+81949	tlen:#comments to post ratio
+81950	forumcode
+81951	forumcode
+81952	forumcode
+81953	forumcode
+81954	numw:# sentences
+81955	numw:avg. # sentences per post
+81956	numw:# sentences in 1st post
+81957	courseref_all
+81958	courserefdensity
+81959	courseref_nkd
+81960	courserefdensity_nkd
+81961	courseref_pfx
+81962	courserefdensity_pfx
+81963	courseref_sfx
+81964	courserefdensity_sfx
+81965	urlref
+81966	timeref
+81967	urlreffirstpost
+81968	timereffirstpost
+81969	equation
+81970	#affirmations
+81971	affirmations density

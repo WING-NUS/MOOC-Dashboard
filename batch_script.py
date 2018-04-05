@@ -48,7 +48,7 @@ def generate_feature():
     subprocess.run("perl gen_features.pl -course eQJvsjn9EeWJaxK5AT4frw  -dbname coursera  -uni -allf", shell=True)
 
 def classifier_model():
-    subprocess.run("perl predict_thread_intervention.pl -course eQJvsjn9EeWJaxK5AT4frw -w nve -in uni+forum+affir+tlen+nums+nont_course_train+test_0_all.txt -model <one of the model files>", shell=True)
+    subprocess.run("perl predict_thread_intervention.pl -course eQJvsjn9EeWJaxK5AT4frw -w nve -in uni+forum+affir+tlen+nums+nont_course_train+test_0_all.txt -model uni+forum+affir+tlen+nums+nont_course_.model_0", shell=True)
 
 if __name__ == '__main__':
     if debug:
