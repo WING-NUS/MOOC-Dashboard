@@ -40,9 +40,6 @@ def compute_term_weights():
 
     subprocess.run("perl compute_term_weights.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw  -uni  -tf -thread inst", shell=True)
     subprocess.run("perl compute_term_weights.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw  -uni  -tf -thread noinst", shell=True)
-    # This is the second round running these two scripts
-    subprocess.run("perl compute_term_weights.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw  -uni  -tf -thread inst", shell=True)
-    subprocess.run("perl compute_term_weights.pl -dbname coursera -course eQJvsjn9EeWJaxK5AT4frw  -uni  -tf -thread noinst", shell=True)
 
 def generate_feature():
     subprocess.run("perl gen_features.pl -course eQJvsjn9EeWJaxK5AT4frw  -dbname coursera  -uni -allf", shell=True)
@@ -51,27 +48,18 @@ def classifier_model():
     subprocess.run("perl predict_thread_intervention.pl -course eQJvsjn9EeWJaxK5AT4frw -w nve -in uni+forum+affir+tlen+nums+nont_course_train+test_0_all.txt -model uni+forum+affir+tlen+nums+nont_course_.model_0", shell=True)
 
 if __name__ == '__main__':
+    courseids = []
+
     if debug:
         print("batch script starts running...")
-        # subprocess.run("ls", shell=True)
     dir_path = os.path.dirname(os.path.realpath(__file__))
     os.chdir(dir_path + "/WriteJsonDataToSQLite")
+    # input all course ids
+    courseids.append("eQJvsjn9EeWJaxK5AT4frw")
+    if debug:
+        print(courseids)
     # populate_sqlite_db()
     # var = dir_path + "\\lib4moocdata\\coursera\\bin\\"
-
-    # Alternate method to run perl file
-    # var = "C:\\Users\\kevin\\OneDrive\\Documents\\FYP\\Muthu's api\\lib4moocdata\\coursera\\bin"
-    # print(var)
-    # pipe = subprocess.Popen(["perl", "make_noinstructor_corpus.pl", var], stdin=subprocess.PIPE)
-    # # pipe.stdin.write(var)
-    # pipe.stdin.close()
-
-    # Another method to run perl file
-    output = subprocess.check_output(
-        ['perl.exe', 'make_noinstructor_corpus.pl', '-dbname coursera', '-course eQJvsjn9EeWJaxK5AT4frw'],
-        universal_newlines=True,
-        cwd="C:\\Users\\kevin\\OneDrive\\Documents\\FYP\\Muthu's api\\lib4moocdata\\coursera\\bin",
-    )
 
     # Copy transfered database to data file
     # subprocess.run("mv ", shell=True)
