@@ -48,12 +48,15 @@ resolved, \
 deleted, \
 approved, \
 posted_time integer, \
+score float, \
 primary key(url))''')
 
 c.execute('''REPLACE into thread_new \
 (id,title,url,num_views,num_posts,starter,last_poster,votes,courseid,forumId,errorflag,posted_time,has_resolved,inst_replied,resolved) \
 select id,title,id,viewCount,totalAnswerCount,creatorId,lastAnsweredBy,upvoteCount,courseId,forumId,0,createdAt,hasResolved,instReplied,hasResolved \
 from thread''')
+
+c.execute('''UPDATE thread_new set score = 0.0''')
 
 
 # Transfer and reorganize the posts data into canonical schema which would be used in classifier api
