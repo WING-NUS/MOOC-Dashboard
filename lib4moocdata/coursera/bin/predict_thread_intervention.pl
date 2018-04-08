@@ -232,8 +232,8 @@ foreach my $test_instance (@$test_set_array_ref) {
 	# Determines which (+1 or -1) class should the test instance be assigned to
 	# based on its feature vector.
 	my $prediction = $classifier->predict(feature => $features);
-	#my $predict_values = $classifier->predict_values(feature => $features);
-	my $predict_values = $classifier->predict_probabilities(feature => $features);
+	my $predict_values = $classifier->predict_values(feature => $features);
+	#my $predict_values = $classifier->predict_probabilities(feature => $features);
 
 	$output{$testset_docids[$j]}{$label} = $prediction;
 	$output{$testset_docids[$j]}{$label} = $prediction;
