@@ -57,19 +57,31 @@ if __name__ == '__main__':
     dir_path = os.path.dirname(os.path.realpath(__file__))
 
     os.chdir(dir_path + "/WriteJsonDataToSQLite")
+    print("#Current path is" + os.getcwd())
     # input all course ids
     courseids.append("eQJvsjn9EeWJaxK5AT4frw")
     if debug:
+        print("****** course ids:")
         print(courseids)
-    # populate_sqlite_db()
-    # var = dir_path + "\\lib4moocdata\\coursera\\bin\\"
+
+    populate_sqlite_db()
 
     # Copy transfered database to data file
-    # subprocess.run("mv ", shell=True)
+    subprocess.run("copy coursera.db " + dir_path + "\lib4moocdata\coursera\data", shell=True) # Be careful with the \ and / in different OS
+    # print("copy coursera.db " + dir_path + "/lib4moocdata/coursera/data")
     os.chdir(dir_path + "/lib4moocdata/coursera/bin")
-    # populate_intervened_posts()
+    print("#Current path is" + os.getcwd())
+    populate_intervened_posts()
+    update_docid()
+    compute_term_weights()
+    generate_feature()
+    classifier_model()
 
     # Copy resultant database to front-end folder
-    
+    os.chdir(dir_path + "/lib4moocdata/coursera/data")
+    print("#Current path is" + os.getcwd())
+    subprocess.run("copy coursera.db " + dir_path + "\..\dashboard_coursera-master", shell=True) # Be careful with the \ and / in different OS
+    print("copy coursera.db " + dir_path + "\..\dashboard_coursera-master")
+
     if debug:
         print("batch script completed")
