@@ -14,9 +14,11 @@ def populate_sqlite_db():
     """
 
     subprocess.run("cd WriteJsonDataToSQLite", shell=True)
-    subprocess.run("python writeToSQLite.py", shell=True)
-    subprocess.run("python fromOriginalToCanonical.py", shell=True)
-    subprocess.run("python transferFromTables.py", shell=True)
+    subprocess.run("py batch_script.py", shell=True)
+    # subprocess.run("python writeToSQLite.py", shell=True)
+    # subprocess.run("python fromOriginalToCanonical.py", shell=True)
+    # subprocess.run("python transferFromTables.py", shell=True)
+    # subprocess.run("python transferFromTables.py", shell=True)
 
 def populate_intervened_posts():
     """Extract the posts and comments that have been intervened by the instructor for at least once.
@@ -53,6 +55,7 @@ if __name__ == '__main__':
     if debug:
         print("batch script starts running...")
     dir_path = os.path.dirname(os.path.realpath(__file__))
+
     os.chdir(dir_path + "/WriteJsonDataToSQLite")
     # input all course ids
     courseids.append("eQJvsjn9EeWJaxK5AT4frw")
@@ -65,5 +68,8 @@ if __name__ == '__main__':
     # subprocess.run("mv ", shell=True)
     os.chdir(dir_path + "/lib4moocdata/coursera/bin")
     # populate_intervened_posts()
+
+    # Copy resultant database to front-end folder
+    
     if debug:
         print("batch script completed")

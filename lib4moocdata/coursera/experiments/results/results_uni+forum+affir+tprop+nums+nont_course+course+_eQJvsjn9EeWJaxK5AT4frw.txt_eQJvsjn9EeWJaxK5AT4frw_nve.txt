@@ -1,3 +1,3 @@
-FOLD 	 # of samples 	 P 	 R 	 F_1 	 idenC_test 	 FPR 	Train_+ve 	 Train_-ve 	 Test_+ve 	 Test_-ve	7 	0	11 	 0
- eQJvsjn9EeWJaxK5AT4frw 	 18 	 100.000	 38.889 	 56.000	 0	 0		 18 	 0 
+FOLD 	 # of samples 	 P 	 R 	 F_1 	 idenC_test 	 FPR 	Train_+ve 	 Train_-ve 	 Test_+ve 	 Test_-ve	17 	0	20 	 0
+ eQJvsjn9EeWJaxK5AT4frw 	 37 	 100.000	 45.946 	 62.963	 0	 0		 37 	 0 
  at_100 	 	 100.000 	 100 	 100.000	 
