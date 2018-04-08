@@ -3,7 +3,7 @@ import yaml
 
 with open('config.yml') as f:
     config = yaml.load(f)
-dbPath = config['db1Path']    # Now dbPath is coursera1.db
+dbPath = config['dbPath']    # Now dbPath is coursera.db
 termweightsdbPath = config['termweightsdbPath']
 f.close()
 
@@ -15,6 +15,8 @@ conn_temp = sqlite3.connect(termweightsdbPath)    # Connect to the term weight d
 conn_temp.row_factory = sqlite3.Row    # For reading column names from term weight Database
 conn_temp.text_factory = lambda x: str(x, 'latin1')
 c_temp = conn_temp.cursor()
+
+print("Inserting term weights ...")
 
 """Create tables for term weights."""
 #***********************************termFreqC14inst******************************#
@@ -135,3 +137,4 @@ for item in rows1:        # Insert combined data into new Database3
 
 conn.commit()
 conn_temp.close()
+print("#Done#")

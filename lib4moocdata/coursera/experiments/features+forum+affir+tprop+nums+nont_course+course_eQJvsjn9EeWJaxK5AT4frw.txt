@@ -1,26 +1,26 @@
-81946	tlen:#posts in thread
-81947	tlen:#comments in thread
-81948	tlen:#posts+#comments
-81949	tlen:#comments to post ratio
-81950	forumcode
-81951	forumcode
-81952	forumcode
-81953	forumcode
-81954	numw:# sentences
-81955	numw:avg. # sentences per post
-81956	numw:# sentences in 1st post
-81957	courseref_all
-81958	courserefdensity
-81959	courseref_nkd
-81960	courserefdensity_nkd
-81961	courseref_pfx
-81962	courserefdensity_pfx
-81963	courseref_sfx
-81964	courserefdensity_sfx
-81965	urlref
-81966	timeref
-81967	urlreffirstpost
-81968	timereffirstpost
-81969	equation
-81970	#affirmations
-81971	affirmations density
+81962	tlen:#posts in thread
+81963	tlen:#comments in thread
+81964	tlen:#posts+#comments
+81965	tlen:#comments to post ratio
+81966	forumcode
+81967	forumcode
+81968	forumcode
+81969	forumcode
+81970	numw:# sentences
+81971	numw:avg. # sentences per post
+81972	numw:# sentences in 1st post
+81973	courseref_all
+81974	courserefdensity
+81975	courseref_nkd
+81976	courserefdensity_nkd
+81977	courseref_pfx
+81978	courserefdensity_pfx
+81979	courseref_sfx
+81980	courserefdensity_sfx
+81981	urlref
+81982	timeref
+81983	urlreffirstpost
+81984	timereffirstpost
+81985	equation
+81986	#affirmations
+81987	affirmations density

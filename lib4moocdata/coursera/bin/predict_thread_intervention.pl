@@ -84,7 +84,7 @@ if (!defined $saved_model){
 
 # Secure database connection as a global variable
 my $dbh		= undef;
-# my $dbh 	= Model::getDBHandle("$path/../data/",undef,undef,$dbname);
+my $dbh 	= Model::getDBHandle("$path/../data/",undef,undef,$dbname);
 
 open (my $log, ">$path/../logs/$progname.log")
 	or die "cannot open $path/../logs/$progname.log for writing";
@@ -257,7 +257,8 @@ $testing_time += $duration;
 my $matrix	= getContigencyMatrix(\%output);
 printContigencyMatrix($matrix, $result_file);
 #savedetailedouput(\%output, $test_data, $output_fold_fh, 1);
-savedetailedouput(\%output_details, $test_data, $output_fold_fh, 1);
+# savedetailedouput(\%output_details, $test_data, $output_fold_fh, 1);
+save_detailed_ouput2db(\%output_details, $test_data);
 
 $precision{0}	= sprintf ("%.3f", getPrecision($matrix) * 100 );
 $recall{0}		= sprintf ("%.3f", getRecall($matrix) * 100 );
@@ -608,6 +609,7 @@ sub savedetailedouput{
 		}else{
 			print $fh "\n $id \t";
 			print $fh "$foldoutput->{$id}{'predictvalue'}";
+			# print "<<<<<<<<<< saved to text file"
 		}
 		#foreach my $label ( keys %{$foldoutput->{$id}} ){
 		#	print $fh "$label\t$foldoutput->{$id}{$label}";
@@ -620,9 +622,13 @@ sub save_detailed_ouput2db{
 	my ($foldoutput, $data) = @_;
 		print  "Id \t Prediction Score";
 	foreach my $id ( keys %{$foldoutput} ){
-		#$id
-		#$foldoutput->{$id}{'predictvalue'}
-		#insert each of these values to the thread table
+		# $id
+		# $foldoutput->{$id}{'predictvalue'}
+		# print "<<<<<<<<<<< $foldoutput->{$id}{'predictvalue'}";
+		# print "$id"
+		my $scrqry	= "Update thread_new set score = $foldoutput->{$id}{'predictvalue'} where docid = ?";
+		my $scrsth	= $dbh->prepare("$scrqry");
+		$scrsth->execute($id)
 	}
 }
 
